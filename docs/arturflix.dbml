@@ -1,0 +1,310 @@
+Project "PlataformaVideoAulas" {
+  database_type: 'PostgreSQL'
+  Note: 'Modelagem genérica para plataforma de ensino (Arquitetura Django: PK bigserial + uuid público).'
+}
+
+// ------------------------------------
+// ENUMS (Tipos Personalizados)
+// ------------------------------------
+
+Enum tipo_aula_enum {
+  video
+  texto
+  quiz
+}
+
+Enum papel_enum {
+  aluno       // Usuário padrão do site
+  admin       // Administrador de conteúdo (is_staff=true)
+  superuser   // Administrador total (is_staff=true, is_superuser=true)
+}
+
+Enum status_chamado_enum {
+  novo
+  em_andamento
+  resolvido
+}
+
+// ------------------------------------
+// TABELAS PRINCIPAIS (Usuários)
+// ------------------------------------
+
+Table Usuarios {
+  id bigserial [pk, note: 'PK interna para FKs e joins']
+  public_id uuid [not null, default: `gen_random_uuid()`, unique, note: 'ID público para URLs/APIs']
+  
+  // Campos de Login e Perfil
+  email varchar(200) [not null, unique]
+  senha_hash varchar(255) [not null, note: 'No Django, é o campo "password" com hash']
+  nome_completo varchar(300) [not null]
+  aceitou_termos boolean [not null, default: false]
+  ultimo_login timestamp
+  
+  // Campos de Permissão (Padrão Django)
+  is_staff boolean [not null, default: false, note: 'Se pode acessar o painel /admin']
+  is_superuser boolean [not null, default: false, note: 'Se tem todas as permissões (Admin Total)']
+
+  // Coluna de Papel Explícito
+  papel papel_enum [not null, default: 'aluno', note: 'Define o papel explícito no DB']
+
+  // Timestamps
+  criado_em timestamp [default: `now()`]
+  atualizado_em timestamp [default: `now()`]
+  
+  Note: 'Entidade de autenticação unificada (Aluno, Admin, Superusuário).'
+}
+
+// ------------------------------------
+// TABELAS DE CONTEÚDO (Cursos)
+// ------------------------------------
+
+Table Cursos {
+  id bigserial [pk]
+  public_id uuid [not null, default: `gen_random_uuid()`, unique]
+  titulo varchar(255) [not null]
+  descricao text
+  url_capa varchar(255)
+  criado_em timestamp [default: `now()`]
+  atualizado_em timestamp [default: `now()`]
+}
+
+Table Modulos {
+  id bigserial [pk]
+  public_id uuid [not null, default: `gen_random_uuid()`, unique]
+  curso_id bigint [not null, note: 'Refere-se a Cursos.id']
+  titulo varchar(255) [not null]
+  ordem int [not null, note: 'Para ordenar os módulos dentro do curso']
+  criado_em timestamp [default: `now()`]
+  atualizado_em timestamp [default: `now()`]
+  
+  Indexes {
+    (curso_id, ordem) [unique]
+  }
+}
+
+Table Aulas {
+  id bigserial [pk]
+  public_id uuid [not null, default: `gen_random_uuid()`, unique]
+  modulo_id bigint [not null, note: 'Refere-se a Modulos.id']
+  titulo varchar(255) [not null]
+  tipo_aula tipo_aula_enum [not null]
+  conteudo text
+  url_video varchar(255)
+  duracao_segundos int
+  ordem int [not null, note: 'Para ordenar as aulas dentro do módulo']
+  criado_em timestamp [default: `now()`]
+  atualizado_em timestamp [default: `now()`]
+  
+  Indexes {
+    (modulo_id, ordem) [unique]
+  }
+}
+
+// ------------------------------------
+// TABELAS DE APOIO (Lições)
+// ------------------------------------
+
+Table Materiais {
+  id bigserial [pk]
+  public_id uuid [not null, default: `gen_random_uuid()`, unique]
+  aula_id bigint [not null, note: 'Refere-se a Aulas.id']
+  titulo varchar(255) [not null]
+  url_arquivo varchar(255) [not null, note: 'URL para o arquivo (PDF, ZIP, etc)']
+  tipo_arquivo varchar(50) [note: 'ex: "pdf", "zip"']
+  criado_em timestamp [default: `now()`]
+  atualizado_em timestamp [default: `now()`]
+  
+  Note: 'Arquivos de apoio para uma aula.'
+}
+
+Table Legendas {
+  id bigserial [pk]
+  public_id uuid [not null, default: `gen_random_uuid()`, unique]
+  aula_id bigint [not null, note: 'Refere-se a Aulas.id']
+  codigo_idioma varchar(10) [not null, note: 'ex: "pt-BR", "en-US"']
+  url_arquivo varchar(255) [not null, note: 'URL para o arquivo .vtt ou .srt']
+  criado_em timestamp [default: `now()`]
+  atualizado_em timestamp [default: `now()`]
+  
+  Note: 'Arquivos de legenda para as aulas em vídeo.'
+}
+
+// ------------------------------------
+// TABELAS DE INTERAÇÃO (Alunos)
+// ------------------------------------
+
+Table Matriculas {
+  id bigserial [pk]
+  public_id uuid [not null, default: `gen_random_uuid()`, unique]
+  usuario_id bigint [not null, note: 'Refere-se a Usuarios.id']
+  curso_id bigint [not null, note: 'Refere-se a Cursos.id']
+  matriculado_em timestamp [default: `now()`]
+  concluido_em timestamp
+  
+  Indexes {
+    (usuario_id, curso_id) [unique]
+  }
+  
+  Note: 'Coloca o curso na área do aluno.'
+}
+
+Table ProgressosAulas {
+  id bigserial [pk]
+  public_id uuid [not null, default: `gen_random_uuid()`, unique]
+  usuario_id bigint [not null, note: 'Refere-se a Usuarios.id']
+  aula_id bigint [not null, note: 'Refere-se a Aulas.id']
+  concluido_em timestamp [default: `now()`]
+  
+  Indexes {
+    (usuario_id, aula_id) [unique]
+  }
+}
+
+
+// ------------------------------------
+// TABELAS DE INTERAÇÃO E RECOMPENSA
+// ------------------------------------
+
+Table Certificados {
+  id bigserial [pk]
+  public_id uuid [not null, default: `gen_random_uuid()`, unique]
+  usuario_id bigint [not null]
+  curso_id bigint [not null]
+  // Dados do Certificado
+  codigo_verificacao varchar(100) [unique, not null, note: 'Código único para validar o certificado no site']
+  url_arquivo varchar(255) [note: 'Link para o PDF gerado S3/Cloud Storage']
+  data_emissao timestamp [default: `now()`]
+  carga_horaria_total int [note: 'Carga horaria registrada no momento da emissão']
+  Indexes {
+    (usuario_id, curso_id) [unique, note: 'Garante apenas um certificado por curso para cada aluno']
+  }
+  Note: 'Registra a conclusão oficial e permite a validação de autenticidade.'
+}
+
+
+// ------------------------------------
+// TABELAS DE INTERAÇÃO SOCIAL E FEEDBACK
+// ------------------------------------
+
+Table ComentariosAulas {
+  id bigserial [pk]
+  public_id uuid [not null, default: `gen_random_uuid()`, unique]
+  aula_id bigint [not null]
+  usuario_id bigint [not null]
+  
+  // Suporte a respostas (Thread)
+  comentario_pai_id bigint [note: 'Se preenchido, é uma resposta a outro comentário']
+  
+  conteudo text [not null]
+  foi_editado boolean [default: false]
+  criado_em timestamp [default: `now()`]
+  atualizado_em timestamp [default: `now()`]
+
+  Note: 'Espaço para dúvidas e discussões. Permite hierarquia simples (pai/filho).'
+}
+
+Table AvaliacoesAulas {
+  id bigserial [pk]
+  aula_id bigint [not null]
+  usuario_id bigint [not null]
+  
+  nota int [not null, note: 'Valor de 1 a 5']
+  comentario_feedback text [note: 'Opcional: justificativa da nota']
+  criado_em timestamp [default: `now()`]
+
+  Indexes {
+    (aula_id, usuario_id) [unique, note: 'Um aluno avalia cada aula apenas uma vez']
+  }
+  
+  Note: 'Sistema de rating para medir a qualidade do conteúdo.'
+}
+
+// ------------------------------------
+// GAMIFICAÇÃO
+// ------------------------------------
+
+Table PerfisGamificados {
+  id bigserial [pk]
+  usuario_id bigint [not null, unique]
+  xp_total bigint [default: 0]
+  nivel_atual int [default: 1]
+  streak_dias int [default: 0]
+  ultima_atividade date
+}
+
+Table HistoricoXP {
+  id bigserial [pk]
+  usuario_id bigint [not null]
+  quantidade int [not null]
+  motivo varchar(100) [note: 'ex: "aula_concluida", "comentario_postado", "bonus_streak"']
+  criado_em timestamp [default: `now()`]
+}
+
+// ------------------------------------
+// TABELA DE SUPORTE
+// ------------------------------------
+
+Table ChamadosSuporte {
+  id bigserial [pk]
+  public_id uuid [not null, default: `gen_random_uuid()`, unique]
+  // Relacionamento opcional: nulo para visitantes, preenchido para alunos logados
+  usuario_id bigint [note: 'ID do usuário (opcional para quem não tem conta)']
+  // Campo para e-mail de contato (obrigatório se usuario_id for nulo)
+  email_contato varchar(255) [not null, note: 'E-mail para retorno do suporte']
+  assunto varchar(255) [not null]
+  mensagem text [not null]
+  resposta text [note: 'Resposta enviada pela equipe de suporte']
+  status status_chamado_enum [not null, default: 'novo']
+  criado_em timestamp [default: `now()`]
+  resolvido_em timestamp
+
+  Note: 'Suporta mensagens de usuários logados e visitantes (ex: erro no cadastro).'
+}
+
+// ------------------------------------
+// TABELA DE AUDITORIA (LOGS)
+// ------------------------------------
+
+Table LogsAuditoria {
+  id bigserial [pk]
+  admin_id bigint [note: 'Refere-se a Usuarios.id (quem realizou a ação)']
+  acao varchar(20) [not null, note: 'INSERT, UPDATE ou DELETE']
+  entidade_alvo varchar(100) [not null, note: 'Nome da tabela afetada']
+  alvo_id_interno bigint [note: 'ID numérico do registro afetado']
+  alvo_id_publico uuid [note: 'UUID do registro afetado']
+  detalhes_antigos jsonb [note: 'Estado da linha antes da mudança (OLD)']
+  detalhes_novos jsonb [note: 'Estado da linha depois da mudança (NEW)']
+  criado_em timestamp [default: `now()`]
+
+  Note: 'Registra todas as alterações feitas no banco via triggers.'
+}
+
+// ------------------------------------
+// DEFINIÇÃO DE RELACIONAMENTOS (FKs)
+// ------------------------------------
+
+Ref: Modulos.curso_id > Cursos.id [delete: cascade]
+Ref: Aulas.modulo_id > Modulos.id [delete: cascade]
+Ref: Materiais.aula_id > Aulas.id [delete: cascade]
+Ref: Legendas.aula_id > Aulas.id [delete: cascade]
+Ref: Matriculas.usuario_id > Usuarios.id [delete: cascade]
+Ref: Matriculas.curso_id > Cursos.id [delete: cascade]
+Ref: ProgressosAulas.usuario_id > Usuarios.id [delete: cascade]
+Ref: ProgressosAulas.aula_id > Aulas.id [delete: cascade]
+Ref: Certificados.usuario_id > Usuarios.id [delete: cascade]
+Ref: Certificados.curso_id > Cursos.id [delete: cascade]
+// Relacionamentos de Comentários
+Ref: ComentariosAulas.aula_id > Aulas.id [delete: cascade]
+Ref: ComentariosAulas.usuario_id > Usuarios.id [delete: cascade]
+Ref: ComentariosAulas.comentario_pai_id > ComentariosAulas.id [delete: cascade]
+
+// Relacionamentos de Avaliações
+Ref: AvaliacoesAulas.aula_id > Aulas.id [delete: cascade]
+Ref: AvaliacoesAulas.usuario_id > Usuarios.id [delete: cascade]
+
+// Relacionamentos de Gamificação
+Ref: PerfisGamificados.usuario_id > Usuarios.id [delete: cascade]
+Ref: HistoricoXP.usuario_id > Usuarios.id [delete: cascade]
+Ref: ChamadosSuporte.usuario_id > Usuarios.id [delete: set null]
+// O log aponta para o usuário que fez a alteração (se identificado)
+Ref: LogsAuditoria.admin_id > Usuarios.id [delete: set null]

@@ -1,0 +1,387 @@
+{
+  "version": "1.0.0",
+  "darkMode": true,
+  "gridEnabling": false,
+  "detailLevel": "All",
+  "tablePositions": [
+    {
+      "name": "Usuarios",
+      "schemaName": "public",
+      "x": -516.8962057354362,
+      "y": 167.62580828155842
+    },
+    {
+      "name": "Cursos",
+      "schemaName": "public",
+      "x": 241.21204080526786,
+      "y": -0.41407073165822794
+    },
+    {
+      "name": "Modulos",
+      "schemaName": "public",
+      "x": 256.4690269636486,
+      "y": 318.5281941873004
+    },
+    {
+      "name": "Aulas",
+      "schemaName": "public",
+      "x": 265.34026224418545,
+      "y": 622.1402095136106
+    },
+    {
+      "name": "Materiais",
+      "schemaName": "public",
+      "x": 690.1081004629316,
+      "y": 684.150288371083
+    },
+    {
+      "name": "Legendas",
+      "schemaName": "public",
+      "x": 688.0588716215213,
+      "y": 995.6086628464429
+    },
+    {
+      "name": "Matriculas",
+      "schemaName": "public",
+      "x": -158.32559972660084,
+      "y": 170.65752352021218
+    },
+    {
+      "name": "ProgressosAulas",
+      "schemaName": "public",
+      "x": 726.9942196083182,
+      "y": 176.67510266661873
+    },
+    {
+      "name": "Certificados",
+      "schemaName": "public",
+      "x": 1053.2720113737228,
+      "y": 414.0956591255835
+    },
+    {
+      "name": "ComentariosAulas",
+      "schemaName": "public",
+      "x": -516.8962057354362,
+      "y": 1423.115030608717
+    },
+    {
+      "name": "AvaliacoesAulas",
+      "schemaName": "public",
+      "x": -225.32979948543618,
+      "y": 1423.115030608717
+    },
+    {
+      "name": "PerfisGamificados",
+      "schemaName": "public",
+      "x": -115.06059662181815,
+      "y": 576.9549261018086
+    },
+    {
+      "name": "HistoricoXP",
+      "schemaName": "public",
+      "x": -82.87347709458709,
+      "y": 874.3501092757847
+    },
+    {
+      "name": "ChamadosSuporte",
+      "schemaName": "public",
+      "x": -504.2479505958802,
+      "y": 650.3563002456931
+    },
+    {
+      "name": "LogsAuditoria",
+      "schemaName": "public",
+      "x": -491.5707045021302,
+      "y": 1053.115030608717
+    }
+  ],
+  "tableGroupCollapseStates": [],
+  "stickyNoteLayouts": [],
+  "referencePaths": [
+    {
+      "firstFieldNames": [
+        "curso_id"
+      ],
+      "firstTableName": "Modulos",
+      "firstSchemaName": "public",
+      "firstRelation": "*",
+      "secondFieldNames": [
+        "id"
+      ],
+      "secondTableName": "Cursos",
+      "secondSchemaName": "public",
+      "secondRelation": "1",
+      "checkPoints": []
+    },
+    {
+      "firstFieldNames": [
+        "modulo_id"
+      ],
+      "firstTableName": "Aulas",
+      "firstSchemaName": "public",
+      "firstRelation": "*",
+      "secondFieldNames": [
+        "id"
+      ],
+      "secondTableName": "Modulos",
+      "secondSchemaName": "public",
+      "secondRelation": "1",
+      "checkPoints": []
+    },
+    {
+      "firstFieldNames": [
+        "aula_id"
+      ],
+      "firstTableName": "Materiais",
+      "firstSchemaName": "public",
+      "firstRelation": "*",
+      "secondFieldNames": [
+        "id"
+      ],
+      "secondTableName": "Aulas",
+      "secondSchemaName": "public",
+      "secondRelation": "1",
+      "checkPoints": []
+    },
+    {
+      "firstFieldNames": [
+        "aula_id"
+      ],
+      "firstTableName": "Legendas",
+      "firstSchemaName": "public",
+      "firstRelation": "*",
+      "secondFieldNames": [
+        "id"
+      ],
+      "secondTableName": "Aulas",
+      "secondSchemaName": "public",
+      "secondRelation": "1",
+      "checkPoints": []
+    },
+    {
+      "firstFieldNames": [
+        "usuario_id"
+      ],
+      "firstTableName": "Matriculas",
+      "firstSchemaName": "public",
+      "firstRelation": "*",
+      "secondFieldNames": [
+        "id"
+      ],
+      "secondTableName": "Usuarios",
+      "secondSchemaName": "public",
+      "secondRelation": "1",
+      "checkPoints": []
+    },
+    {
+      "firstFieldNames": [
+        "curso_id"
+      ],
+      "firstTableName": "Matriculas",
+      "firstSchemaName": "public",
+      "firstRelation": "*",
+      "secondFieldNames": [
+        "id"
+      ],
+      "secondTableName": "Cursos",
+      "secondSchemaName": "public",
+      "secondRelation": "1",
+      "checkPoints": []
+    },
+    {
+      "firstFieldNames": [
+        "usuario_id"
+      ],
+      "firstTableName": "ProgressosAulas",
+      "firstSchemaName": "public",
+      "firstRelation": "*",
+      "secondFieldNames": [
+        "id"
+      ],
+      "secondTableName": "Usuarios",
+      "secondSchemaName": "public",
+      "secondRelation": "1",
+      "checkPoints": []
+    },
+    {
+      "firstFieldNames": [
+        "aula_id"
+      ],
+      "firstTableName": "ProgressosAulas",
+      "firstSchemaName": "public",
+      "firstRelation": "*",
+      "secondFieldNames": [
+        "id"
+      ],
+      "secondTableName": "Aulas",
+      "secondSchemaName": "public",
+      "secondRelation": "1",
+      "checkPoints": []
+    },
+    {
+      "firstFieldNames": [
+        "usuario_id"
+      ],
+      "firstTableName": "Certificados",
+      "firstSchemaName": "public",
+      "firstRelation": "*",
+      "secondFieldNames": [
+        "id"
+      ],
+      "secondTableName": "Usuarios",
+      "secondSchemaName": "public",
+      "secondRelation": "1",
+      "checkPoints": []
+    },
+    {
+      "firstFieldNames": [
+        "curso_id"
+      ],
+      "firstTableName": "Certificados",
+      "firstSchemaName": "public",
+      "firstRelation": "*",
+      "secondFieldNames": [
+        "id"
+      ],
+      "secondTableName": "Cursos",
+      "secondSchemaName": "public",
+      "secondRelation": "1",
+      "checkPoints": []
+    },
+    {
+      "firstFieldNames": [
+        "aula_id"
+      ],
+      "firstTableName": "ComentariosAulas",
+      "firstSchemaName": "public",
+      "firstRelation": "*",
+      "secondFieldNames": [
+        "id"
+      ],
+      "secondTableName": "Aulas",
+      "secondSchemaName": "public",
+      "secondRelation": "1",
+      "checkPoints": []
+    },
+    {
+      "firstFieldNames": [
+        "usuario_id"
+      ],
+      "firstTableName": "ComentariosAulas",
+      "firstSchemaName": "public",
+      "firstRelation": "*",
+      "secondFieldNames": [
+        "id"
+      ],
+      "secondTableName": "Usuarios",
+      "secondSchemaName": "public",
+      "secondRelation": "1",
+      "checkPoints": []
+    },
+    {
+      "firstFieldNames": [
+        "comentario_pai_id"
+      ],
+      "firstTableName": "ComentariosAulas",
+      "firstSchemaName": "public",
+      "firstRelation": "*",
+      "secondFieldNames": [
+        "id"
+      ],
+      "secondTableName": "ComentariosAulas",
+      "secondSchemaName": "public",
+      "secondRelation": "1",
+      "checkPoints": []
+    },
+    {
+      "firstFieldNames": [
+        "aula_id"
+      ],
+      "firstTableName": "AvaliacoesAulas",
+      "firstSchemaName": "public",
+      "firstRelation": "*",
+      "secondFieldNames": [
+        "id"
+      ],
+      "secondTableName": "Aulas",
+      "secondSchemaName": "public",
+      "secondRelation": "1",
+      "checkPoints": []
+    },
+    {
+      "firstFieldNames": [
+        "usuario_id"
+      ],
+      "firstTableName": "AvaliacoesAulas",
+      "firstSchemaName": "public",
+      "firstRelation": "*",
+      "secondFieldNames": [
+        "id"
+      ],
+      "secondTableName": "Usuarios",
+      "secondSchemaName": "public",
+      "secondRelation": "1",
+      "checkPoints": []
+    },
+    {
+      "firstFieldNames": [
+        "usuario_id"
+      ],
+      "firstTableName": "PerfisGamificados",
+      "firstSchemaName": "public",
+      "firstRelation": "*",
+      "secondFieldNames": [
+        "id"
+      ],
+      "secondTableName": "Usuarios",
+      "secondSchemaName": "public",
+      "secondRelation": "1",
+      "checkPoints": []
+    },
+    {
+      "firstFieldNames": [
+        "usuario_id"
+      ],
+      "firstTableName": "HistoricoXP",
+      "firstSchemaName": "public",
+      "firstRelation": "*",
+      "secondFieldNames": [
+        "id"
+      ],
+      "secondTableName": "Usuarios",
+      "secondSchemaName": "public",
+      "secondRelation": "1",
+      "checkPoints": []
+    },
+    {
+      "firstFieldNames": [
+        "usuario_id"
+      ],
+      "firstTableName": "ChamadosSuporte",
+      "firstSchemaName": "public",
+      "firstRelation": "*",
+      "secondFieldNames": [
+        "id"
+      ],
+      "secondTableName": "Usuarios",
+      "secondSchemaName": "public",
+      "secondRelation": "1",
+      "checkPoints": []
+    },
+    {
+      "firstFieldNames": [
+        "admin_id"
+      ],
+      "firstTableName": "LogsAuditoria",
+      "firstSchemaName": "public",
+      "firstRelation": "*",
+      "secondFieldNames": [
+        "id"
+      ],
+      "secondTableName": "Usuarios",
+      "secondSchemaName": "public",
+      "secondRelation": "1",
+      "checkPoints": []
+    }
+  ]
+}
