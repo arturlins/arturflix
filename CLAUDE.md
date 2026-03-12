@@ -214,22 +214,44 @@ protected function isAccessible(User $user, ?string $path = null): bool
 - If you have modified any PHP files, you must run `vendor/bin/pint --dirty --format agent` before finalizing changes to ensure your code matches the project's expected style.
 - Do not run `vendor/bin/pint --test --format agent`, simply run `vendor/bin/pint --format agent` to fix any formatting issues.
 
-=== phpunit/core rules ===
+=== pest/core rules ===
 
-# PHPUnit
+# Pest PHP
 
-- This application uses PHPUnit for testing. All tests must be written as PHPUnit classes. Use `php artisan make:test --phpunit {name}` to create a new test.
-- If you see a test using "Pest", convert it to PHPUnit.
+- This application uses Pest PHP for testing. All tests must be written using Pest syntax: `it('description', fn() => ...)`.
+- Use `php artisan make:test {name}` to create a new feature test, and `php artisan make:test --unit {name}` for unit tests. Then convert the generated class to Pest syntax.
 - Every time a test has been updated, run that singular test.
-- When the tests relating to your feature are passing, ask the user if they would like to also run the entire test suite to make sure everything is still passing.
+- When the tests relating to your feature are passing, ask the user if they would like to also run the entire test suite.
 - Tests should cover all happy paths, failure paths, and edge cases.
-- You must not remove any tests or test files from the tests directory without approval. These are not temporary or helper files; these are core to the application.
+- You must not remove any tests or test files without approval.
 
 ## Running Tests
 
-- Run the minimal number of tests, using an appropriate filter, before finalizing.
-- To run all tests: `php artisan test --compact`.
-- To run all tests in a file: `php artisan test --compact tests/Feature/ExampleTest.php`.
-- To filter on a particular test name: `php artisan test --compact --filter=testName` (recommended after making a change to a related file).
+- To run all tests: `./vendor/bin/pest --compact`.
+- To run all tests in a file: `./vendor/bin/pest tests/Feature/Auth/LoginTest.php --compact`.
+- To filter on a particular test name: `./vendor/bin/pest --filter="logs out authenticated user" --compact`.
+
+=== app/architecture rules ===
+
+# Application Architecture
+
+## Directory Structure
+
+Beyond the standard Laravel directories, this application has:
+
+- `app/Actions/` — Single-purpose business operations. One class, one `handle()` method. Use directly in controllers for simple operations.
+- `app/Services/` — Orchestrates multiple Actions. Use when business logic spans multiple models or requires coordination.
+- `app/Queries/` — Reusable Eloquent query builders. Encapsulate complex queries to keep controllers thin.
+- `app/Concerns/` — Traits for Eloquent Models. Example: `HasPublicId` generates UUIDs on creation.
+- `app/Traits/` — Generic PHP traits (not tied to Models). Can be used in controllers, jobs, commands.
+- `app/Http/Services/` — HTTP-layer specific logic: response formatting, webhook parsing, external HTTP integrations.
+
+## Inertia.js
+
+- All routes are in `routes/web.php`. There is no `routes/api.php`.
+- Controllers return `Inertia::render('PageName', $props)` for pages and `redirect()` for form submissions.
+- Authentication uses Laravel sessions (cookies), not Sanctum tokens.
+- Shared data (auth.user, flash messages) is configured in `app/Http/Middleware/HandleInertiaRequests.php`.
+- Frontend TypeScript types for shared data are in `resources/js/types/index.d.ts`.
 
 </laravel-boost-guidelines>
