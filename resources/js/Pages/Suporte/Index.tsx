@@ -80,29 +80,6 @@ export default function SuporteIndex() {
                     <p className="text-[#8a8a8a]">Estamos aqui para ajudar. Entre em contato pelo canal de sua preferência.</p>
                 </header>
 
-                {/* Cards de contato */}
-                <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 mb-14">
-                    {[
-                        { icon: '❓', title: 'FAQ', desc: 'Respostas para as dúvidas mais comuns.', link: '#', label: 'Acessar FAQ' },
-                        { icon: '✉️', title: 'E-mail', desc: 'Respondemos em até 24 horas úteis.', link: 'mailto:suporte@arturflix.com', label: 'Enviar e-mail' },
-                        { icon: '💬', title: 'Discord', desc: 'Comunidade ativa de alunos e instrutores.', link: '#', label: 'Entrar no servidor' },
-                    ].map(({ icon, title, desc, link, label }) => (
-                        <article
-                            key={title}
-                            className="bg-[#12151b] border border-[#1e2430] rounded-xl p-6 text-center"
-                        >
-                            <span className="text-3xl mb-3 block" aria-hidden="true">{icon}</span>
-                            <h2 className="text-[#f1f1f1] font-semibold mb-2">{title}</h2>
-                            <p className="text-[#8a8a8a] text-sm mb-4">{desc}</p>
-                            <a
-                                href={link}
-                                className="text-[#E50914] hover:text-[#c20710] text-sm font-medium transition-colors"
-                            >
-                                {label} →
-                            </a>
-                        </article>
-                    ))}
-                </div>
 
                 {/* Formulário */}
                 <section className="max-w-xl">

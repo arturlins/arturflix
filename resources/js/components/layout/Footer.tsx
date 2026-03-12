@@ -45,17 +45,17 @@ export function Footer() {
                         <ul className="space-y-2">
                             <li>
                                 <a href="#" className="text-[#8a8a8a] hover:text-[#f1f1f1] text-sm transition-colors flex items-center gap-2">
-                                    <span aria-hidden="true">📸</span> Instagram
+                                    <span aria-hidden="true"></span> Instagram
                                 </a>
                             </li>
                             <li>
                                 <a href="#" className="text-[#8a8a8a] hover:text-[#f1f1f1] text-sm transition-colors flex items-center gap-2">
-                                    <span aria-hidden="true">🐦</span> Twitter / X
+                                    <span aria-hidden="true"></span> Twitter / X
                                 </a>
                             </li>
                             <li>
                                 <a href="#" className="text-[#8a8a8a] hover:text-[#f1f1f1] text-sm transition-colors flex items-center gap-2">
-                                    <span aria-hidden="true">💼</span> LinkedIn
+                                    <span aria-hidden="true"></span> LinkedIn
                                 </a>
                             </li>
                         </ul>
