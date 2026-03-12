@@ -6,7 +6,6 @@ export default function Register() {
         email: '',
         password: '',
         password_confirmation: '',
-        aceitou_termos: false,
     })
 
     function handleSubmit(e: React.FormEvent) {
