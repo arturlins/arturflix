@@ -14,12 +14,12 @@ export function Navbar() {
             className="fixed top-0 w-full z-50 bg-[#0d1016]/90 backdrop-blur-md border-b border-[#1e2430]"
         >
             <div className="max-w-6xl mx-auto px-6 h-14 flex items-center justify-between">
-                <Link
-                    href="/"
-                    className="text-[#E50914] text-2xl tracking-wide"
-                    style={{ fontFamily: "'Bebas Neue', Impact, sans-serif" }}
-                >
-                    ARTURFLIX
+                <Link href="/" aria-label="ArturFlix — página inicial">
+                    <img
+                        src="/logo-arturflix.png"
+                        alt="ArturFlix"
+                        className="h-7 w-auto"
+                    />
                 </Link>
 
                 <div className="hidden md:flex items-center gap-8">
