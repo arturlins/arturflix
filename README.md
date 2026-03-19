@@ -1,59 +1,198 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
-
 <p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
+  <img src="public/img/logo.png" alt="ArturFlix Logo" width="300">
 </p>
 
-## About Laravel
+<p align="center">
+  <strong>Plataforma de videoaulas inspirada na Netflix — mas feita para aprender de verdade.</strong>
+</p>
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+<p align="center">
+  <img src="https://img.shields.io/badge/Laravel-12-FF2D20?logo=laravel&logoColor=white" alt="Laravel 12">
+  <img src="https://img.shields.io/badge/React-18-61DAFB?logo=react&logoColor=black" alt="React 18">
+  <img src="https://img.shields.io/badge/Inertia.js-2-6C63FF" alt="Inertia.js 2">
+  <img src="https://img.shields.io/badge/PostgreSQL-17-4169E1?logo=postgresql&logoColor=white" alt="PostgreSQL">
+  <img src="https://img.shields.io/badge/TypeScript-5-3178C6?logo=typescript&logoColor=white" alt="TypeScript 5">
+  <img src="https://img.shields.io/badge/Tailwind_CSS-4-06B6D4?logo=tailwindcss&logoColor=white" alt="Tailwind CSS 4">
+</p>
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+---
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+## Sobre o Projeto
 
-## Learning Laravel
+**ArturFlix** é uma plataforma completa de videoaulas construída com Laravel, React e Inertia.js. O nome e a identidade visual são uma paródia divertida à Netflix, mas a plataforma é séria e robusta — projetada para suportar múltiplos cursos, módulos organizados, aulas em vídeo, aulas em texto, quizzes, materiais de apoio, legendas, gamificação com XP e certificados.
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework. You can also check out [Laravel Learn](https://laravel.com/learn), where you will be guided through building a modern Laravel application.
+### Funcionalidades
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+- **Cursos e Módulos** — Organização hierárquica de conteúdo (Curso → Módulos → Aulas)
+- **Três tipos de aula** — Vídeo, Texto e Quiz
+- **Materiais de apoio** — Arquivos complementares vinculados às aulas
+- **Legendas** — Suporte a legendas nos vídeos
+- **Sistema de matrículas** — Controle de acesso por curso
+- **Progresso do aluno** — Rastreamento de conclusão por aula
+- **Avaliações** — Sistema de avaliação das aulas pelos alunos
+- **Comentários** — Discussão por aula
+- **Gamificação** — Perfil gamificado com histórico de XP
+- **Certificados** — Emissão de certificados de conclusão
+- **Suporte** — Sistema de chamados integrado
+- **Auditoria** — Log completo de ações na plataforma
+- **Papéis de usuário** — Aluno, Admin e Superuser
 
-## Laravel Sponsors
+---
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+## Stack Tecnológica
 
-### Premium Partners
+| Camada | Tecnologia |
+|--------|-----------|
+| **Backend** | PHP 8.4 + Laravel 12 |
+| **Frontend** | React 18 + TypeScript 5 |
+| **Ponte SPA** | Inertia.js 2 (sem API REST — comunicação direta) |
+| **Banco de dados** | PostgreSQL |
+| **Estilização** | Tailwind CSS 4 |
+| **Componentes UI** | Lucide React (ícones) + componentes próprios |
+| **Bundler** | Vite 6 |
+| **Testes** | Pest PHP 3 |
+| **Rotas JS** | Ziggy (rotas nomeadas do Laravel no frontend) |
+| **Code Style** | Laravel Pint |
 
-- **[Vehikl](https://vehikl.com)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Redberry](https://redberry.international/laravel-development)**
-- **[Active Logic](https://activelogic.com)**
+---
 
-## Contributing
+## Arquitetura
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+O projeto segue a arquitetura **Inertia.js monolítica moderna**: o backend Laravel serve páginas React diretamente via Inertia, eliminando a necessidade de uma API REST separada. Toda a autenticação é feita por sessão (cookies), e a navegação entre páginas acontece sem recarregamento completo.
 
-## Code of Conduct
+### Padrão de camadas no backend
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+```
+Controller → Action / Service → Model (Eloquent) → PostgreSQL
+     ↓
+Inertia::render('Page', $props) → React Component
+```
 
-## Security Vulnerabilities
+- **Controllers** recebem a requisição, delegam a lógica e retornam uma resposta Inertia
+- **Actions** (`app/Actions/`) encapsulam operações de negócio únicas (um método `handle()`)
+- **Services** (`app/Services/`) orquestram múltiplas Actions quando a lógica é mais complexa
+- **Queries** (`app/Queries/`) encapsulam consultas Eloquent reutilizáveis
+- **Form Requests** validam os dados de entrada com regras dedicadas
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+---
 
-## License
+## Estrutura de Pastas
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+```
+arturflix/
+├── app/
+│   ├── Actions/            # Operações de negócio (single-purpose)
+│   ├── Concerns/           # Traits para Models (ex: HasPublicId)
+│   ├── Enums/              # Enums PHP 8.1+ (PapelEnum, TipoAulaEnum, StatusChamadoEnum)
+│   ├── Http/
+│   │   ├── Controllers/    # Controllers Inertia (Auth, Cursos, Profile, etc.)
+│   │   └── Services/       # Lógica HTTP específica (formatação, webhooks)
+│   ├── Models/             # 15 models Eloquent (Curso, Modulo, Aula, Matricula, etc.)
+│   ├── Providers/          # Service Providers
+│   ├── Queries/            # Query builders reutilizáveis
+│   ├── Services/           # Orquestração de regras de negócio
+│   └── Traits/             # Traits genéricos (não ligados a Models)
+│
+├── resources/
+│   └── js/
+│       ├── components/
+│       │   ├── layout/     # Navbar, Footer
+│       │   └── ui/         # Componentes reutilizáveis (Button, Card, Badge, Input, etc.)
+│       ├── layouts/        # AppLayout, GuestLayout
+│       ├── Pages/
+│       │   ├── Auth/       # Login, Register, ForgotPassword, etc.
+│       │   ├── Cursos/     # Listagem de cursos
+│       │   ├── Suporte/    # Página de suporte
+│       │   ├── Dashboard.tsx
+│       │   └── Welcome.tsx
+│       ├── lib/            # Utilitários TypeScript
+│       └── types/          # Tipagens compartilhadas (index.d.ts)
+│
+├── database/
+│   └── migrations/         # 18 migrations (users, cursos, modulos, aulas, etc.)
+│
+├── routes/
+│   └── web.php             # Todas as rotas (Inertia, sem API separada)
+│
+├── tests/
+│   ├── Feature/            # Testes de integração (Pest PHP)
+│   └── Unit/               # Testes unitários (Pest PHP)
+│
+└── config/                 # Configurações Laravel padrão
+```
+
+---
+
+## Modelos de Dados
+
+O banco possui **15 tabelas principais** que refletem o domínio educacional:
+
+```
+Usuario ─┬─ Matricula ──── Curso ──── Modulo ──── Aula
+         │                                         ├── Legenda
+         │                                         ├── Material
+         │                                         ├── ComentarioAula
+         │                                         ├── AvaliacaoAula
+         │                                         └── ProgressoAula
+         ├── PerfilGamificado
+         ├── HistoricoXP
+         ├── Certificado
+         └── ChamadoSuporte
+
+LogAuditoria (transversal — registra ações de qualquer entidade)
+```
+
+---
+
+## Como Rodar
+
+### Pré-requisitos
+
+- PHP 8.4+
+- Composer
+- Node.js 20+ (ou Bun)
+- PostgreSQL 15+
+
+### Instalação rápida
+
+```bash
+# Clonar o repositório
+git clone https://github.com/seu-usuario/arturflix.git
+cd arturflix
+
+# Instalar dependências e configurar o projeto
+composer setup
+```
+
+O comando `composer setup` executa automaticamente:
+1. `composer install`
+2. Cópia do `.env.example` para `.env`
+3. Geração da chave da aplicação
+4. Execução das migrations
+5. Instalação das dependências JS (`bun install`)
+6. Build do frontend (`bun run build`)
+
+> **Nota:** Configure as credenciais do PostgreSQL no arquivo `.env` antes de rodar o setup.
+
+### Desenvolvimento
+
+```bash
+# Inicia servidor Laravel + queue + logs + Vite simultaneamente
+composer run dev
+```
+
+### Testes
+
+```bash
+# Rodar todos os testes
+./vendor/bin/pest --compact
+
+# Rodar um arquivo específico
+./vendor/bin/pest tests/Feature/Auth/LoginTest.php --compact
+```
+
+---
+
+## Licença
+
+Projeto acadêmico / pessoal. Todos os direitos reservados.
