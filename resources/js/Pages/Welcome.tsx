@@ -4,7 +4,7 @@ import GuestLayout from '@/layouts/GuestLayout'
 export default function Welcome() {
     return (
         <GuestLayout>
-            <Head title="ArturFlix — Aprenda. Evolua. Seja certificado." />
+            <Head title="Arturflix — Aprenda. Evolua. Seja certificado." />
 
             {/* Hero */}
             <header role="banner" className="flex flex-col items-center justify-center text-center px-6 pt-24 pb-20">
