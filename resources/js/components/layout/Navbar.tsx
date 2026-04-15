@@ -40,6 +40,14 @@ export function Navbar() {
                 <div className="flex items-center gap-3">
                     {auth.user ? (
                         <>
+                            {auth.user.is_admin && (
+                                <Link
+                                    href="/admin"
+                                    className="hidden sm:inline text-[#E50914] hover:text-white text-sm font-medium transition-colors"
+                                >
+                                    Admin
+                                </Link>
+                            )}
                             <span className="text-sm text-[#8a8a8a] hidden sm:block">
                                 {auth.user.name}
                             </span>
