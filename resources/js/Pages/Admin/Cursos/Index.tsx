@@ -8,7 +8,6 @@ interface AdminCursoRow {
     url_capa: string | null
     youtube_playlist_id: string | null
     channel: string | null
-    synced_at: string | null
     modulos_count: number
 }
 

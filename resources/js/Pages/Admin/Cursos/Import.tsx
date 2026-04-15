@@ -38,10 +38,14 @@ export default function AdminCursosImport() {
                             className={`w-full px-3 py-2 rounded-lg bg-[#0d1016] border text-sm text-[#f1f1f1] placeholder-[#5a5a5a] focus:outline-none transition-colors ${
                                 errors.playlist_input ? 'border-red-500' : 'border-[#1e2430] focus:border-[#E50914]'
                             }`}
+                            aria-invalid={!!errors.playlist_input}
+                            aria-describedby={errors.playlist_input ? 'playlist_input_error' : undefined}
                             autoFocus
                         />
                         {errors.playlist_input && (
-                            <p className="text-red-400 text-xs mt-2">{errors.playlist_input}</p>
+                            <p id="playlist_input_error" className="text-red-400 text-xs mt-2">
+                                {errors.playlist_input}
+                            </p>
                         )}
                     </div>
 
