@@ -20,7 +20,17 @@ class Curso extends Model
         'titulo',
         'descricao',
         'url_capa',
+        'youtube_playlist_id',
+        'youtube_channel_title',
+        'synced_at',
     ];
+
+    protected function casts(): array
+    {
+        return [
+            'synced_at' => 'datetime',
+        ];
+    }
 
     public function modulos(): HasMany
     {

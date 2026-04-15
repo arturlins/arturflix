@@ -22,6 +22,7 @@ class Aula extends Model
         'tipo_aula',
         'conteudo',
         'url_video',
+        'youtube_video_id',
         'duracao_segundos',
         'ordem',
     ];
