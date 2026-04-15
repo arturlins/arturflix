@@ -20,14 +20,13 @@ class AdminCursoController extends Controller
         $cursos = Curso::query()
             ->withCount('modulos')
             ->latest('id')
-            ->get(['id', 'public_id', 'titulo', 'url_capa', 'youtube_playlist_id', 'youtube_channel_title', 'synced_at', 'created_at'])
+            ->get(['id', 'public_id', 'titulo', 'url_capa', 'youtube_playlist_id', 'youtube_channel_title', 'created_at'])
             ->map(fn (Curso $c) => [
                 'public_id' => $c->public_id,
                 'titulo' => $c->titulo,
                 'url_capa' => $c->url_capa,
                 'youtube_playlist_id' => $c->youtube_playlist_id,
                 'channel' => $c->youtube_channel_title,
-                'synced_at' => $c->synced_at?->toIso8601String(),
                 'modulos_count' => $c->modulos_count,
             ]);
 

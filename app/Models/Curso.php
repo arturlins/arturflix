@@ -6,7 +6,6 @@ use App\Concerns\HasPublicId;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Database\Eloquent\Relations\HasManyThrough;
 
 class Curso extends Model
 {
@@ -35,10 +34,5 @@ class Curso extends Model
     public function modulos(): HasMany
     {
         return $this->hasMany(Modulo::class)->orderBy('ordem');
-    }
-
-    public function aulas(): HasManyThrough
-    {
-        return $this->hasManyThrough(Aula::class, Modulo::class);
     }
 }
