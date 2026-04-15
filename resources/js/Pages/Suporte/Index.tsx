@@ -1,8 +1,10 @@
 import { Head } from '@inertiajs/react'
-import { useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import GuestLayout from '@/layouts/GuestLayout'
 
 const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+const ACCEPTED_IMAGE_TYPES = ['image/jpeg', 'image/png', 'image/gif']
+const MAX_IMAGE_BYTES = 5 * 1024 * 1024
 
 interface FormState {
     name: string
@@ -16,6 +18,13 @@ interface FormErrors {
     email?: string
     subject?: string
     message?: string
+    attachment?: string
+}
+
+function formatBytes(bytes: number): string {
+    if (bytes < 1024) return `${bytes} B`
+    if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} KB`
+    return `${(bytes / (1024 * 1024)).toFixed(1)} MB`
 }
 
 export default function SuporteIndex() {
@@ -24,6 +33,60 @@ export default function SuporteIndex() {
     const [touched, setTouched] = useState<Partial<Record<keyof FormState, boolean>>>({})
     const [loading, setLoading] = useState(false)
     const [success, setSuccess] = useState(false)
+    const [attachment, setAttachment] = useState<File | null>(null)
+    const [attachmentPreview, setAttachmentPreview] = useState<string | null>(null)
+    const [isDragging, setIsDragging] = useState(false)
+    const fileInputRef = useRef<HTMLInputElement>(null)
+
+    useEffect(() => {
+        if (!attachment) {
+            setAttachmentPreview(null)
+            return
+        }
+        const url = URL.createObjectURL(attachment)
+        setAttachmentPreview(url)
+        return () => URL.revokeObjectURL(url)
+    }, [attachment])
+
+    function validateAttachment(file: File): string | undefined {
+        if (!ACCEPTED_IMAGE_TYPES.includes(file.type)) {
+            return 'Formato inválido. Envie JPG, PNG ou GIF.'
+        }
+        if (file.size > MAX_IMAGE_BYTES) {
+            return 'Arquivo acima de 5 MB.'
+        }
+        return undefined
+    }
+
+    function handleAttachmentSelected(file: File | null) {
+        if (!file) {
+            setAttachment(null)
+            setErrors((prev) => ({ ...prev, attachment: undefined }))
+            return
+        }
+        const error = validateAttachment(file)
+        if (error) {
+            setAttachment(null)
+            setErrors((prev) => ({ ...prev, attachment: error }))
+            if (fileInputRef.current) fileInputRef.current.value = ''
+            return
+        }
+        setAttachment(file)
+        setErrors((prev) => ({ ...prev, attachment: undefined }))
+    }
+
+    function handleRemoveAttachment() {
+        setAttachment(null)
+        setErrors((prev) => ({ ...prev, attachment: undefined }))
+        if (fileInputRef.current) fileInputRef.current.value = ''
+    }
+
+    function handleDrop(e: React.DragEvent<HTMLLabelElement>) {
+        e.preventDefault()
+        setIsDragging(false)
+        const file = e.dataTransfer.files?.[0] ?? null
+        handleAttachmentSelected(file)
+    }
 
     function validate(field: keyof FormState, value: string): string | undefined {
         if (field === 'name' && value.trim().length < 2) return 'Nome deve ter pelo menos 2 caracteres.'
@@ -172,6 +235,82 @@ export default function SuporteIndex() {
                                 />
                                 {touched.message && errors.message && (
                                     <span className="text-red-400 text-xs mt-1 block">{errors.message}</span>
+                                )}
+                            </div>
+
+                            <div>
+                                <label className="block text-sm text-[#f1f1f1] mb-1.5">
+                                    Anexar imagem <span className="text-[#555] font-normal">(opcional)</span>
+                                </label>
+
+                                <input
+                                    ref={fileInputRef}
+                                    id="attachment"
+                                    type="file"
+                                    accept="image/jpeg,image/png,image/gif"
+                                    onChange={(e) => handleAttachmentSelected(e.target.files?.[0] ?? null)}
+                                    className="sr-only"
+                                />
+
+                                {attachment && attachmentPreview ? (
+                                    <div className="flex items-center gap-3 bg-[#171b23] border border-[#1e2430] rounded-lg p-3">
+                                        <img
+                                            src={attachmentPreview}
+                                            alt="Pré-visualização do anexo"
+                                            className="w-14 h-14 rounded-md object-cover flex-shrink-0 border border-[#1e2430]"
+                                        />
+                                        <div className="flex-1 min-w-0">
+                                            <p className="text-sm text-[#f1f1f1] truncate">{attachment.name}</p>
+                                            <p className="text-xs text-[#8a8a8a]">{formatBytes(attachment.size)}</p>
+                                        </div>
+                                        <button
+                                            type="button"
+                                            onClick={handleRemoveAttachment}
+                                            className="text-[#8a8a8a] hover:text-[#E50914] text-xs font-medium px-2 py-1 rounded transition-colors"
+                                            aria-label="Remover imagem"
+                                        >
+                                            Remover
+                                        </button>
+                                    </div>
+                                ) : (
+                                    <label
+                                        htmlFor="attachment"
+                                        onDragOver={(e) => {
+                                            e.preventDefault()
+                                            setIsDragging(true)
+                                        }}
+                                        onDragLeave={() => setIsDragging(false)}
+                                        onDrop={handleDrop}
+                                        className={`flex flex-col items-center justify-center gap-1.5 cursor-pointer rounded-lg border border-dashed px-4 py-6 text-center transition-colors ${
+                                            errors.attachment
+                                                ? 'border-[#E50914] bg-[#E50914]/5'
+                                                : isDragging
+                                                ? 'border-[#E50914] bg-[#E50914]/5'
+                                                : 'border-[#1e2430] bg-[#171b23] hover:border-[#2a3240]'
+                                        }`}
+                                    >
+                                        <svg
+                                            className="w-6 h-6 text-[#8a8a8a]"
+                                            fill="none"
+                                            viewBox="0 0 24 24"
+                                            stroke="currentColor"
+                                            strokeWidth={1.5}
+                                        >
+                                            <path
+                                                strokeLinecap="round"
+                                                strokeLinejoin="round"
+                                                d="M3 16.5v2.25A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75V16.5M16.5 12 12 7.5 7.5 12M12 7.5V21"
+                                            />
+                                        </svg>
+                                        <span className="text-sm text-[#f1f1f1]">
+                                            Clique para enviar <span className="text-[#8a8a8a]">ou arraste aqui</span>
+                                        </span>
+                                        <span className="text-xs text-[#555]">JPG, PNG ou GIF · até 5 MB</span>
+                                    </label>
+                                )}
+
+                                {errors.attachment && (
+                                    <span className="text-red-400 text-xs mt-1 block">{errors.attachment}</span>
                                 )}
                             </div>
 
