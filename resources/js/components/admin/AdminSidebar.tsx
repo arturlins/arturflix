@@ -1,12 +1,11 @@
 import { Link } from '@inertiajs/react'
-import { GraduationCap, LayoutDashboard, Users, type LucideIcon } from 'lucide-react'
+import { GraduationCap, LayoutDashboard, type LucideIcon } from 'lucide-react'
 
 type Item = { href: string; label: string; Icon: LucideIcon }
 
 const ITEMS: Item[] = [
     { href: '/admin', label: 'Dashboard', Icon: LayoutDashboard },
     { href: '/admin/cursos', label: 'Cursos', Icon: GraduationCap },
-    { href: '/admin/usuarios', label: 'Usuários', Icon: Users },
 ]
 
 export function AdminSidebar({ current }: { current: string }) {
