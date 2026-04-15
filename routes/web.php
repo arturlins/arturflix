@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Admin\AdminCursoController;
 use App\Http\Controllers\Admin\AdminDashboardController;
 use App\Http\Controllers\Auth\AuthenticatedSessionController;
 use App\Http\Controllers\Auth\ConfirmablePasswordController;
@@ -56,4 +57,8 @@ Route::middleware('auth')->group(function (): void {
 
 Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(function (): void {
     Route::get('/', AdminDashboardController::class)->name('dashboard');
+
+    Route::get('/cursos', [AdminCursoController::class, 'index'])->name('cursos.index');
+    Route::get('/cursos/importar', [AdminCursoController::class, 'importForm'])->name('cursos.import.form');
+    Route::post('/cursos/importar', [AdminCursoController::class, 'import'])->name('cursos.import');
 });
