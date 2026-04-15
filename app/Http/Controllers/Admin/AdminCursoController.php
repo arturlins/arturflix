@@ -7,7 +7,9 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\ImportPlaylistRequest;
 use App\Models\Curso;
 use App\Services\YouTube\YouTubeApiException;
+use Illuminate\Database\UniqueConstraintViolationException;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Support\Facades\Log;
 use Inertia\Inertia;
 use Inertia\Response;
 
@@ -37,7 +39,7 @@ class AdminCursoController extends Controller
         return Inertia::render('Admin/Cursos/Import');
     }
 
-    public function import(ImportPlaylistRequest $request): RedirectResponse
+    public function import(ImportPlaylistRequest $request, ImportPlaylistAsCurso $action): RedirectResponse
     {
         $playlistId = $request->extractedPlaylistId();
 
@@ -48,8 +50,18 @@ class AdminCursoController extends Controller
         }
 
         try {
-            $curso = app(ImportPlaylistAsCurso::class)->handle($playlistId);
+            $curso = $action->handle($playlistId);
+        } catch (UniqueConstraintViolationException) {
+            return back()
+                ->withErrors(['playlist_input' => 'Esta playlist já foi importada.'])
+                ->withInput();
         } catch (YouTubeApiException $e) {
+            Log::warning('YouTube import falhou', [
+                'playlist_id' => $playlistId,
+                'admin_id' => $request->user()?->id,
+                'message' => $e->getMessage(),
+            ]);
+
             return back()->withErrors(['playlist_input' => $e->getMessage()])->withInput();
         }
 
