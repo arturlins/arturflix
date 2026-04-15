@@ -10,12 +10,13 @@ use App\Http\Controllers\Auth\PasswordController;
 use App\Http\Controllers\Auth\PasswordResetLinkController;
 use App\Http\Controllers\Auth\RegisteredUserController;
 use App\Http\Controllers\Auth\VerifyEmailController;
+use App\Http\Controllers\CursoController;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
 // Rotas públicas
 Route::get('/', fn () => Inertia::render('Welcome'))->name('home');
-Route::get('/cursos', fn () => Inertia::render('Cursos/Index'))->name('cursos.index');
+Route::get('/cursos', [CursoController::class, 'index'])->name('cursos.index');
 Route::get('/suporte', fn () => Inertia::render('Suporte/Index'))->name('suporte.index');
 
 // Autenticação — apenas guests
