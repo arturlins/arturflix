@@ -12,21 +12,19 @@ class YouTubePlaylistService
 
     public static function make(): self
     {
-        $apiKey = config('youtube.api_key');
-
-        if (empty($apiKey)) {
-            throw new YouTubeApiException('YOUTUBE_API_KEY não configurada.');
-        }
-
         $client = new GoogleClient;
         $client->setApplicationName((string) config('youtube.application_name'));
-        $client->setDeveloperKey($apiKey);
+        $client->setDeveloperKey((string) config('youtube.api_key'));
 
         return new self(new YouTubeService($client));
     }
 
     public function fetch(string $playlistId): PlaylistData
     {
+        if (empty(config('youtube.api_key'))) {
+            throw new YouTubeApiException('YOUTUBE_API_KEY não configurada.');
+        }
+
         try {
             $playlistInfo = $this->fetchPlaylistMeta($playlistId);
             $videos = $this->fetchAllPlaylistVideos($playlistId);
