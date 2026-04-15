@@ -4,6 +4,7 @@ export interface User {
     name: string
     email: string
     papel: 'aluno' | 'admin' | 'superuser'
+    is_admin: boolean
 }
 
 export interface PageProps {
