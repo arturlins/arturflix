@@ -43,4 +43,9 @@ class User extends Authenticatable
             'papel' => PapelEnum::class,
         ];
     }
+
+    public function isAdmin(): bool
+    {
+        return in_array($this->papel, [PapelEnum::ADMIN, PapelEnum::SUPERUSER], true);
+    }
 }
