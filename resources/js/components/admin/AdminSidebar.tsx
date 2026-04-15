@@ -1,11 +1,12 @@
 import { Link } from '@inertiajs/react'
+import { GraduationCap, LayoutDashboard, Users, type LucideIcon } from 'lucide-react'
 
-type Item = { href: string; label: string; icon: string }
+type Item = { href: string; label: string; Icon: LucideIcon }
 
 const ITEMS: Item[] = [
-    { href: '/admin', label: 'Dashboard', icon: '▪' },
-    { href: '/admin/cursos', label: 'Cursos', icon: '▪' },
-    { href: '/admin/usuarios', label: 'Usuários', icon: '▪' },
+    { href: '/admin', label: 'Dashboard', Icon: LayoutDashboard },
+    { href: '/admin/cursos', label: 'Cursos', Icon: GraduationCap },
+    { href: '/admin/usuarios', label: 'Usuários', Icon: Users },
 ]
 
 export function AdminSidebar({ current }: { current: string }) {
@@ -15,21 +16,22 @@ export function AdminSidebar({ current }: { current: string }) {
                 <p className="text-[10px] uppercase tracking-[0.18em] text-[#8a8a8a]">Admin</p>
                 <p className="text-[#f1f1f1] font-semibold">ArturFlix</p>
             </div>
-            <nav className="p-3">
-                {ITEMS.map((item) => {
-                    const active = current === item.href || (item.href !== '/admin' && current.startsWith(item.href))
+            <nav className="p-3" aria-label="Navegação do admin">
+                {ITEMS.map(({ href, label, Icon }) => {
+                    const active = current === href || (href !== '/admin' && current.startsWith(href))
                     return (
                         <Link
-                            key={item.href}
-                            href={item.href}
+                            key={href}
+                            href={href}
+                            aria-current={active ? 'page' : undefined}
                             className={`flex items-center gap-3 px-3 py-2 rounded-lg text-sm transition-colors ${
                                 active
                                     ? 'bg-[#E50914]/10 text-[#E50914]'
                                     : 'text-[#8a8a8a] hover:text-[#f1f1f1] hover:bg-[#12151b]'
                             }`}
                         >
-                            <span aria-hidden="true">{item.icon}</span>
-                            <span>{item.label}</span>
+                            <Icon size={16} aria-hidden="true" />
+                            <span>{label}</span>
                         </Link>
                     )
                 })}
