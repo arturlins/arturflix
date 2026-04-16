@@ -58,7 +58,10 @@ class AdminCursoController extends Controller
     public function edit(Curso $curso): Response
     {
         $this->authorize('view', $curso);
-        $curso->load(['modulos' => fn ($q) => $q->orderBy('ordem'), 'modulos.aulas']);
+        $curso->load([
+            'modulos' => fn ($q) => $q->orderBy('ordem'),
+            'modulos.aulas' => fn ($q) => $q->orderBy('ordem'),
+        ]);
 
         return Inertia::render('Admin/Cursos/Edit', [
             'curso' => [

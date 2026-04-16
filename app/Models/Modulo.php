@@ -36,6 +36,6 @@ class Modulo extends Model
 
     public function aulas(): HasMany
     {
-        return $this->hasMany(Aula::class)->orderBy('ordem');
+        return $this->hasMany(Aula::class);
     }
 }
