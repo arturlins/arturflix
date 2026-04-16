@@ -16,7 +16,7 @@ class CursoController extends Controller
     public function index(): Response
     {
         $cursos = Curso::query()
-            ->with(['modulos.aulas:id,modulo_id,duracao_segundos'])
+            ->with(['modulos' => fn ($q) => $q->orderBy('ordem'), 'modulos.aulas:id,modulo_id,duracao_segundos'])
             ->latest('id')
             ->get()
             ->map(function (Curso $curso): array {
@@ -38,7 +38,7 @@ class CursoController extends Controller
 
     public function show(Request $request, Curso $curso): Response
     {
-        $curso->load(['modulos.aulas']);
+        $curso->load(['modulos' => fn ($q) => $q->orderBy('ordem'), 'modulos.aulas']);
 
         $aulas = $curso->modulos->flatMap->aulas;
 
