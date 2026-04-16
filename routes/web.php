@@ -16,6 +16,7 @@ use App\Http\Controllers\Auth\RegisteredUserController;
 use App\Http\Controllers\Auth\VerifyEmailController;
 use App\Http\Controllers\CursoController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\SuporteController;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
@@ -24,6 +25,7 @@ Route::get('/', fn () => Inertia::render('Welcome'))->name('home');
 Route::get('/cursos', [CursoController::class, 'index'])->name('cursos.index');
 Route::get('/cursos/{curso:public_id}', [CursoController::class, 'show'])->name('cursos.show');
 Route::get('/suporte', fn () => Inertia::render('Suporte/Index'))->name('suporte.index');
+Route::post('/suporte', [SuporteController::class, 'store'])->name('suporte.store');
 
 // Autenticação — apenas guests
 Route::middleware('guest')->group(function (): void {
