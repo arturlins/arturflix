@@ -41,7 +41,12 @@ export function ConfirmDialog({
                     >
                         Cancelar
                     </button>
-                    <Button variant={destructive ? 'destructive' : 'default'} onClick={onConfirm} disabled={loading}>
+                    <Button
+                        variant="default"
+                        onClick={onConfirm}
+                        disabled={loading}
+                        className={destructive ? 'bg-destructive text-white hover:bg-destructive/90' : ''}
+                    >
                         {loading ? 'Processando…' : confirmLabel}
                     </Button>
                 </>

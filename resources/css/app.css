@@ -41,6 +41,16 @@
     --color-success: #16a34a;
     --color-success-soft: rgba(22, 163, 74, 0.12);
 
+    /* Semânticos (usados pelo Button CVA e Input existentes) */
+    --color-primary: #E50914;
+    --color-primary-foreground: #ffffff;
+    --color-secondary: #161a23;
+    --color-secondary-foreground: #f4f5f7;
+    --color-destructive: #E50914;
+    --color-muted: #161a23;
+    --color-muted-foreground: #a8adbb;
+    --color-background: #0d1016;
+
     /* Focus / inputs */
     --color-ring: #E50914;
     --color-input: #1e2430;
