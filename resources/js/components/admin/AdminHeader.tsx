@@ -18,10 +18,7 @@ export function AdminHeader({ breadcrumbs, user }: { breadcrumbs: Crumb[]; user:
                     <span className="h-3.5 w-px bg-border-strong shrink-0" aria-hidden="true" />
                     <Breadcrumbs items={breadcrumbs} />
                 </div>
-                <div className="flex items-center gap-2 shrink-0">
-                    <kbd className="hidden lg:inline-flex items-center gap-0.5 px-1.5 h-6 rounded-md border border-border bg-surface-2 text-[10px] font-mono text-foreground-subtle">
-                        <span>⌘</span><span>K</span>
-                    </kbd>
+                <div className="shrink-0">
                     <UserMenu name={user.name} email={user.email} papel={user.papel} />
                 </div>
             </div>

@@ -41,10 +41,6 @@ class AdminModuloController extends Controller
                 'public_id' => $modulo->public_id,
                 'titulo' => $modulo->titulo,
                 'ordem' => $modulo->ordem,
-                'curso' => [
-                    'public_id' => $modulo->curso->public_id,
-                    'titulo' => $modulo->curso->titulo,
-                ],
                 'aulas' => $modulo->aulas->map(fn ($a) => [
                     'public_id' => $a->public_id,
                     'titulo' => $a->titulo,
@@ -52,6 +48,10 @@ class AdminModuloController extends Controller
                     'ordem' => $a->ordem,
                     'duracao_segundos' => $a->duracao_segundos,
                 ]),
+            ],
+            'curso' => [
+                'public_id' => $modulo->curso->public_id,
+                'titulo' => $modulo->curso->titulo,
             ],
         ]);
     }
