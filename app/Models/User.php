@@ -6,6 +6,7 @@ use App\Concerns\HasPublicId;
 use App\Enums\PapelEnum;
 use Database\Factories\UserFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 
@@ -47,5 +48,10 @@ class User extends Authenticatable
     public function isAdmin(): bool
     {
         return in_array($this->papel, [PapelEnum::ADMIN, PapelEnum::SUPERUSER], true);
+    }
+
+    public function matriculas(): HasMany
+    {
+        return $this->hasMany(Matricula::class, 'usuario_id');
     }
 }

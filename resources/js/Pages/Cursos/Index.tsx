@@ -1,4 +1,4 @@
-import { Head, usePage } from '@inertiajs/react'
+import { Head, Link, usePage } from '@inertiajs/react'
 import GuestLayout from '@/layouts/GuestLayout'
 import type { CursoListItem, PageProps } from '@/types'
 
@@ -36,9 +36,10 @@ export default function CursosIndex() {
                 ) : (
                     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
                         {cursos.map((curso) => (
-                            <article
+                            <Link
                                 key={curso.public_id}
-                                className="bg-[#12151b] border border-[#1e2430] rounded-xl overflow-hidden hover:border-[#E50914]/40 transition-colors group"
+                                href={route('cursos.show', curso.public_id)}
+                                className="bg-[#12151b] border border-[#1e2430] rounded-xl overflow-hidden hover:border-[#E50914]/40 transition-colors group flex flex-col"
                             >
                                 <div className="h-40 bg-[#0a0c12] overflow-hidden">
                                     {curso.url_capa ? (
@@ -55,7 +56,7 @@ export default function CursosIndex() {
                                     )}
                                 </div>
 
-                                <div className="p-5">
+                                <div className="p-5 flex-1 flex flex-col">
                                     {curso.channel && (
                                         <p className="text-[10px] uppercase tracking-[0.14em] text-[#8a8a8a] mb-2">
                                             {curso.channel}
@@ -66,19 +67,16 @@ export default function CursosIndex() {
                                         {curso.titulo}
                                     </h2>
 
-                                    <div className="flex items-center justify-between text-xs text-[#8a8a8a] mb-4">
+                                    <div className="flex items-center justify-between text-xs text-[#8a8a8a] mb-4 mt-auto">
                                         <span>{formatDuration(curso.duracao_total_segundos)}</span>
                                         <span>{curso.total_aulas} aulas</span>
                                     </div>
 
-                                    <button
-                                        type="button"
-                                        className="w-full py-2 rounded-lg border border-[#E50914] text-[#E50914] hover:bg-[#E50914]/10 text-xs font-medium transition-colors"
-                                    >
+                                    <span className="w-full py-2 rounded-lg border border-[#E50914] text-[#E50914] group-hover:bg-[#E50914]/10 text-xs font-medium transition-colors text-center">
                                         Ver curso
-                                    </button>
+                                    </span>
                                 </div>
-                            </article>
+                            </Link>
                         ))}
                     </div>
                 )}

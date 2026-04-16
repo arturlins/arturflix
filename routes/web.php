@@ -11,12 +11,14 @@ use App\Http\Controllers\Auth\PasswordResetLinkController;
 use App\Http\Controllers\Auth\RegisteredUserController;
 use App\Http\Controllers\Auth\VerifyEmailController;
 use App\Http\Controllers\CursoController;
+use App\Http\Controllers\DashboardController;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
 // Rotas públicas
 Route::get('/', fn () => Inertia::render('Welcome'))->name('home');
 Route::get('/cursos', [CursoController::class, 'index'])->name('cursos.index');
+Route::get('/cursos/{curso:public_id}', [CursoController::class, 'show'])->name('cursos.show');
 Route::get('/suporte', fn () => Inertia::render('Suporte/Index'))->name('suporte.index');
 
 // Autenticação — apenas guests
@@ -53,7 +55,9 @@ Route::middleware('auth')->group(function (): void {
 
     Route::post('/logout', [AuthenticatedSessionController::class, 'destroy'])->name('logout');
 
-    Route::get('/dashboard', fn () => Inertia::render('Dashboard'))->name('dashboard');
+    Route::get('/dashboard', DashboardController::class)->name('dashboard');
+
+    Route::post('/cursos/{curso:public_id}/matricular', [CursoController::class, 'matricular'])->name('cursos.matricular');
 });
 
 Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(function (): void {

@@ -35,4 +35,9 @@ class Curso extends Model
     {
         return $this->hasMany(Modulo::class)->orderBy('ordem');
     }
+
+    public function matriculas(): HasMany
+    {
+        return $this->hasMany(Matricula::class);
+    }
 }
