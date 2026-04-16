@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Models\ChamadoSuporte;
 use App\Models\Curso;
 use App\Models\User;
 use Inertia\Inertia;
@@ -16,6 +17,7 @@ class AdminDashboardController extends Controller
             'stats' => [
                 'total_cursos' => Curso::query()->count(),
                 'total_usuarios' => User::query()->count(),
+                'chamados_abertos' => ChamadoSuporte::whereIn('status', ['novo', 'em_andamento'])->count(),
             ],
         ]);
     }
