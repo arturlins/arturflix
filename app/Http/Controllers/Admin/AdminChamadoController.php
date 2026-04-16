@@ -77,6 +77,7 @@ class AdminChamadoController extends Controller
                 'public_id' => $chamado->public_id,
                 'assunto' => $chamado->assunto,
                 'mensagem' => $chamado->mensagem,
+                'anexo_url' => $chamado->anexo_path ? asset('storage/'.$chamado->anexo_path) : null,
                 'resposta' => $chamado->resposta,
                 'email_contato' => $chamado->email_contato,
                 'status' => $chamado->status->value,

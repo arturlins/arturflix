@@ -1,6 +1,7 @@
-import { Head } from '@inertiajs/react'
+import { Head, router, usePage } from '@inertiajs/react'
 import { useEffect, useRef, useState } from 'react'
 import GuestLayout from '@/layouts/GuestLayout'
+import type { PageProps } from '@/types'
 
 const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
 const ACCEPTED_IMAGE_TYPES = ['image/jpeg', 'image/png', 'image/gif']
@@ -28,7 +29,13 @@ function formatBytes(bytes: number): string {
 }
 
 export default function SuporteIndex() {
-    const [form, setForm] = useState<FormState>({ name: '', email: '', subject: '', message: '' })
+    const { auth } = usePage<PageProps>().props
+    const [form, setForm] = useState<FormState>({
+        name: auth.user?.name ?? '',
+        email: auth.user?.email ?? '',
+        subject: '',
+        message: '',
+    })
     const [errors, setErrors] = useState<FormErrors>({})
     const [touched, setTouched] = useState<Partial<Record<keyof FormState, boolean>>>({})
     const [loading, setLoading] = useState(false)
@@ -93,6 +100,7 @@ export default function SuporteIndex() {
         if (field === 'email' && !EMAIL_REGEX.test(value)) return 'Informe um e-mail válido.'
         if (field === 'subject' && !value) return 'Selecione um assunto.'
         if (field === 'message' && value.trim().length < 10) return 'Mensagem deve ter pelo menos 10 caracteres.'
+        if (field === 'message' && value.length > 1000) return 'Mensagem deve ter no máximo 1.000 caracteres.'
         return undefined
     }
 
@@ -119,11 +127,22 @@ export default function SuporteIndex() {
         setTouched({ name: true, email: true, subject: true, message: true })
         if (Object.keys(newErrors).length > 0) return
 
+        const payload = new FormData()
+        payload.append('name', form.name)
+        payload.append('email', form.email)
+        payload.append('subject', form.subject)
+        payload.append('message', form.message)
+        if (attachment) payload.append('attachment', attachment)
+
         setLoading(true)
-        setTimeout(() => {
-            setLoading(false)
-            setSuccess(true)
-        }, 1500)
+        router.post(route('suporte.store'), payload, {
+            forceFormData: true,
+            onSuccess: () => setSuccess(true),
+            onError: (serverErrors) => {
+                setErrors(serverErrors as unknown as FormErrors)
+            },
+            onFinish: () => setLoading(false),
+        })
     }
 
     const inputClass = (field: keyof FormState) =>
@@ -169,6 +188,7 @@ export default function SuporteIndex() {
                                     placeholder="Seu nome"
                                     required
                                     minLength={2}
+                                    readOnly={!!auth.user}
                                     className={inputClass('name')}
                                 />
                                 {touched.name && errors.name && (
@@ -188,6 +208,7 @@ export default function SuporteIndex() {
                                     onBlur={() => handleBlur('email')}
                                     placeholder="seu@email.com"
                                     required
+                                    readOnly={!!auth.user}
                                     className={inputClass('email')}
                                 />
                                 {touched.email && errors.email && (
@@ -231,11 +252,19 @@ export default function SuporteIndex() {
                                     placeholder="Descreva sua dúvida ou problema..."
                                     required
                                     minLength={10}
+                                    maxLength={1000}
                                     className={inputClass('message')}
                                 />
-                                {touched.message && errors.message && (
-                                    <span className="text-red-400 text-xs mt-1 block">{errors.message}</span>
-                                )}
+                                <div className="flex items-center justify-between mt-1">
+                                    {touched.message && errors.message ? (
+                                        <span className="text-red-400 text-xs">{errors.message}</span>
+                                    ) : (
+                                        <span />
+                                    )}
+                                    <span className={`text-xs ${form.message.length > 950 ? 'text-red-400' : 'text-[#555]'}`}>
+                                        {form.message.length}/1.000
+                                    </span>
+                                </div>
                             </div>
 
                             <div>

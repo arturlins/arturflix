@@ -18,6 +18,7 @@ interface ChamadoDetail {
     public_id: string
     assunto: string
     mensagem: string
+    anexo_url: string | null
     resposta: string | null
     email_contato: string
     status: 'novo' | 'em_andamento' | 'resolvido'
@@ -123,6 +124,15 @@ export default function AdminSuporteShow({ chamado }: Props) {
                             </div>
                             <div className="rounded-xl border border-border bg-surface-2 px-5 py-4 text-sm text-foreground leading-relaxed whitespace-pre-wrap">
                                 {chamado.mensagem}
+                                {chamado.anexo_url && (
+                                    <a href={chamado.anexo_url} target="_blank" rel="noopener noreferrer" className="block mt-3">
+                                        <img
+                                            src={chamado.anexo_url}
+                                            alt="Anexo do chamado"
+                                            className="max-w-sm rounded-lg border border-border"
+                                        />
+                                    </a>
+                                )}
                             </div>
                         </div>
                     </div>

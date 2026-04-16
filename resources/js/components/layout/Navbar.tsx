@@ -14,7 +14,7 @@ export function Navbar() {
             className="fixed top-0 w-full z-50 bg-[#0d1016]/90 backdrop-blur-md border-b border-[#1e2430]"
         >
             <div className="max-w-6xl mx-auto px-6 h-14 flex items-center justify-between">
-                <Link href="/" aria-label="ArturFlix — página inicial">
+                <Link href={auth.user ? '/dashboard' : '/'} aria-label="ArturFlix — página inicial">
                     <img
                         src="/logo-arturflix.png"
                         alt="ArturFlix"

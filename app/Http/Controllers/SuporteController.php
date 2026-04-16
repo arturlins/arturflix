@@ -13,12 +13,23 @@ class SuporteController extends Controller
     {
         $data = $request->validated();
 
-        ChamadoSuporte::create([
+        $chamado = ChamadoSuporte::create([
             'usuario_id' => $request->user()?->id,
             'email_contato' => $data['email'],
             'assunto' => ucfirst($data['subject']).': '.Str::limit($data['message'], 60),
             'mensagem' => $data['message'],
         ]);
+
+        if ($request->hasFile('attachment')) {
+            $ext = $request->file('attachment')->getClientOriginalExtension();
+            $chamado->update([
+                'anexo_path' => $request->file('attachment')->storeAs(
+                    'chamados',
+                    $chamado->public_id.'.'.$ext,
+                    'public',
+                ),
+            ]);
+        }
 
         return back()->with('success', 'Mensagem enviada.');
     }

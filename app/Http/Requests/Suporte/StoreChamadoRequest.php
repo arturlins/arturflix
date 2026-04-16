@@ -18,10 +18,11 @@ class StoreChamadoRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'name' => ['required', 'string', 'max:255'],
+            'name' => ['required', 'string', 'min:2', 'max:255'],
             'email' => ['required', 'email', 'max:255'],
-            'subject' => ['required', 'string', 'in:duvida,bug,cobranca,sugestao,outro'],
-            'message' => ['required', 'string', 'min:10', 'max:5000'],
+            'subject' => ['required', 'string', 'in:tecnico,cobranca,sugestao,outro'],
+            'message' => ['required', 'string', 'min:10', 'max:1000'],
+            'attachment' => ['nullable', 'image', 'mimes:jpeg,png,gif', 'max:5120'],
         ];
     }
 }

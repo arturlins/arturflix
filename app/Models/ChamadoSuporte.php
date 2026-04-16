@@ -27,6 +27,7 @@ class ChamadoSuporte extends Model
         'email_contato',
         'assunto',
         'mensagem',
+        'anexo_path',
         'resposta',
         'status',
         'resolvido_em',
