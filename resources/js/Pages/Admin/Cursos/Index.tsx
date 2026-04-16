@@ -19,7 +19,7 @@ export default function AdminCursosIndex() {
     const { cursos, flash } = usePage<Props>().props
 
     return (
-        <AdminLayout>
+        <AdminLayout breadcrumbs={[{ label: 'Cursos' }]}>
             <Head title="Admin — Cursos" />
 
             <div className="max-w-6xl mx-auto px-8 py-10">

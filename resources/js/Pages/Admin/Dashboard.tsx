@@ -10,7 +10,7 @@ interface Props {
 
 export default function AdminDashboard({ stats }: Props) {
     return (
-        <AdminLayout>
+        <AdminLayout breadcrumbs={[{ label: 'Dashboard' }]}>
             <Head title="Admin — Dashboard" />
 
             <div className="max-w-5xl mx-auto px-8 py-10">

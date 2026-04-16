@@ -13,7 +13,7 @@ export default function AdminCursosImport() {
     }
 
     return (
-        <AdminLayout>
+        <AdminLayout breadcrumbs={[{ label: 'Cursos', href: '/admin/cursos' }, { label: 'Importar do YouTube' }]}>
             <Head title="Admin — Importar playlist" />
 
             <div className="max-w-2xl mx-auto px-8 py-10">
