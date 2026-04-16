@@ -2,12 +2,16 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Actions\Admin\DeleteCursoCascade;
 use App\Actions\ImportPlaylistAsCurso;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\ImportPlaylistRequest;
+use App\Http\Requests\Admin\StoreCursoRequest;
+use App\Http\Requests\Admin\UpdateCursoRequest;
 use App\Models\Curso;
 use App\Services\YouTube\YouTubeApiException;
 use Illuminate\Database\UniqueConstraintViolationException;
+use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Log;
 use Inertia\Inertia;
@@ -15,6 +19,8 @@ use Inertia\Response;
 
 class AdminCursoController extends Controller
 {
+    use AuthorizesRequests;
+
     public function index(): Response
     {
         $cursos = Curso::query()
@@ -31,6 +37,62 @@ class AdminCursoController extends Controller
             ]);
 
         return Inertia::render('Admin/Cursos/Index', ['cursos' => $cursos]);
+    }
+
+    public function create(): Response
+    {
+        $this->authorize('create', Curso::class);
+
+        return Inertia::render('Admin/Cursos/Create');
+    }
+
+    public function store(StoreCursoRequest $request): RedirectResponse
+    {
+        $curso = Curso::create($request->validated());
+
+        return redirect()
+            ->route('admin.cursos.edit', $curso)
+            ->with('success', "Curso \"{$curso->titulo}\" criado.");
+    }
+
+    public function edit(Curso $curso): Response
+    {
+        $this->authorize('view', $curso);
+        $curso->load(['modulos.aulas']);
+
+        return Inertia::render('Admin/Cursos/Edit', [
+            'curso' => [
+                'public_id' => $curso->public_id,
+                'titulo' => $curso->titulo,
+                'descricao' => $curso->descricao,
+                'url_capa' => $curso->url_capa,
+                'youtube_playlist_id' => $curso->youtube_playlist_id,
+                'youtube_channel_title' => $curso->youtube_channel_title,
+                'modulos' => $curso->modulos->map(fn ($m) => [
+                    'public_id' => $m->public_id,
+                    'titulo' => $m->titulo,
+                    'ordem' => $m->ordem,
+                    'aulas_count' => $m->aulas->count(),
+                ]),
+            ],
+        ]);
+    }
+
+    public function update(UpdateCursoRequest $request, Curso $curso): RedirectResponse
+    {
+        $curso->update($request->validated());
+
+        return back()->with('success', 'Curso atualizado.');
+    }
+
+    public function destroy(Curso $curso, DeleteCursoCascade $action): RedirectResponse
+    {
+        $this->authorize('delete', $curso);
+        $action->handle($curso);
+
+        return redirect()
+            ->route('admin.cursos.index')
+            ->with('success', 'Curso excluído.');
     }
 
     public function importForm(): Response
