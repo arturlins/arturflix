@@ -193,6 +193,50 @@ composer run dev
 
 ---
 
+## Painel Administrativo
+
+O painel admin fica em `/admin` e é acessível apenas para usuários com papel `Admin` ou `Superuser`.
+
+### Papéis de usuário
+
+| Papel | Permissões |
+|-------|-----------|
+| **Aluno** | Acesso padrão — assiste aulas, acompanha progresso |
+| **Admin** | Gerencia conteúdo (cursos, módulos, aulas) e alunos |
+| **Superuser** | Gerencia tudo, inclusive outros admins |
+
+### Criar o superuser inicial
+
+Defina as variáveis no `.env` antes de rodar:
+
+```dotenv
+ADMIN_SEED_EMAIL=seu@email.com
+ADMIN_SEED_PASSWORD=sua-senha-segura
+```
+
+Depois execute:
+
+```bash
+php artisan db:seed --class=AdminUserSeeder
+```
+
+O comando é idempotente — pode ser rodado múltiplas vezes sem duplicar o usuário.
+
+### Endpoints principais
+
+| Rota | Descrição |
+|------|-----------|
+| `/admin` | Dashboard do painel |
+| `/admin/cursos` | Listagem e gestão de cursos |
+| `/admin/usuarios` | Gestão de usuários |
+| `/admin/suporte` | Chamados de suporte |
+
+### Sair do painel
+
+Clique no menu do usuário no canto superior direito e selecione **"Sair"**.
+
+---
+
 ## Licença
 
 Projeto acadêmico / pessoal. Todos os direitos reservados.
