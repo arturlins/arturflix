@@ -4,18 +4,19 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-return new class extends Migration {
+return new class extends Migration
+{
     /**
      * Run the migrations.
      */
     public function up(): void
     {
-        Schema::create("cursos", function (Blueprint $table) {
-            $table->bigIncrements("id");
-            $table->uuid("public_id")->unique();
-            $table->string("titulo", 255);
-            $table->text("descricao")->nullable();
-            $table->string("url_capa", 255)->nullable();
+        Schema::create('cursos', function (Blueprint $table) {
+            $table->bigIncrements('id');
+            $table->uuid('public_id')->unique();
+            $table->string('titulo', 255);
+            $table->text('descricao')->nullable();
+            $table->string('url_capa', 255)->nullable();
             $table->timestamps();
         });
     }
@@ -25,6 +26,6 @@ return new class extends Migration {
      */
     public function down(): void
     {
-        Schema::dropIfExists("cursos");
+        Schema::dropIfExists('cursos');
     }
 };
