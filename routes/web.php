@@ -1,7 +1,11 @@
 <?php
 
+use App\Http\Controllers\Admin\AdminAulaController;
+use App\Http\Controllers\Admin\AdminChamadoController;
 use App\Http\Controllers\Admin\AdminCursoController;
 use App\Http\Controllers\Admin\AdminDashboardController;
+use App\Http\Controllers\Admin\AdminModuloController;
+use App\Http\Controllers\Admin\AdminUserController;
 use App\Http\Controllers\Auth\AuthenticatedSessionController;
 use App\Http\Controllers\Auth\ConfirmablePasswordController;
 use App\Http\Controllers\Auth\EmailVerificationNotificationController;
@@ -63,7 +67,41 @@ Route::middleware('auth')->group(function (): void {
 Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(function (): void {
     Route::get('/', AdminDashboardController::class)->name('dashboard');
 
+    // Cursos
     Route::get('/cursos', [AdminCursoController::class, 'index'])->name('cursos.index');
+    Route::get('/cursos/criar', [AdminCursoController::class, 'create'])->name('cursos.create');
+    Route::post('/cursos', [AdminCursoController::class, 'store'])->name('cursos.store');
     Route::get('/cursos/importar', [AdminCursoController::class, 'importForm'])->name('cursos.import.form');
     Route::post('/cursos/importar', [AdminCursoController::class, 'import'])->name('cursos.import');
+    Route::get('/cursos/{curso:public_id}', [AdminCursoController::class, 'edit'])->name('cursos.edit');
+    Route::put('/cursos/{curso:public_id}', [AdminCursoController::class, 'update'])->name('cursos.update');
+    Route::delete('/cursos/{curso:public_id}', [AdminCursoController::class, 'destroy'])->name('cursos.destroy');
+
+    // Módulos (escopo: curso)
+    Route::post('/cursos/{curso:public_id}/modulos', [AdminModuloController::class, 'store'])->name('modulos.store');
+    Route::put('/cursos/{curso:public_id}/modulos/reordenar', [AdminModuloController::class, 'reorder'])->name('modulos.reorder');
+    Route::get('/modulos/{modulo:public_id}', [AdminModuloController::class, 'edit'])->name('modulos.edit');
+    Route::put('/modulos/{modulo:public_id}', [AdminModuloController::class, 'update'])->name('modulos.update');
+    Route::delete('/modulos/{modulo:public_id}', [AdminModuloController::class, 'destroy'])->name('modulos.destroy');
+
+    // Aulas (escopo: módulo)
+    Route::post('/modulos/{modulo:public_id}/aulas', [AdminAulaController::class, 'store'])->name('aulas.store');
+    Route::put('/modulos/{modulo:public_id}/aulas/reordenar', [AdminAulaController::class, 'reorder'])->name('aulas.reorder');
+    Route::get('/aulas/{aula:public_id}', [AdminAulaController::class, 'edit'])->name('aulas.edit');
+    Route::put('/aulas/{aula:public_id}', [AdminAulaController::class, 'update'])->name('aulas.update');
+    Route::delete('/aulas/{aula:public_id}', [AdminAulaController::class, 'destroy'])->name('aulas.destroy');
+
+    // Usuários
+    Route::get('/usuarios', [AdminUserController::class, 'index'])->name('usuarios.index');
+    Route::get('/usuarios/criar', [AdminUserController::class, 'create'])->name('usuarios.create');
+    Route::post('/usuarios', [AdminUserController::class, 'store'])->name('usuarios.store');
+    Route::get('/usuarios/{user:public_id}', [AdminUserController::class, 'edit'])->name('usuarios.edit');
+    Route::put('/usuarios/{user:public_id}', [AdminUserController::class, 'update'])->name('usuarios.update');
+    Route::delete('/usuarios/{user:public_id}', [AdminUserController::class, 'destroy'])->name('usuarios.destroy');
+
+    // Chamados de suporte
+    Route::get('/suporte', [AdminChamadoController::class, 'index'])->name('suporte.index');
+    Route::get('/suporte/{chamado:public_id}', [AdminChamadoController::class, 'show'])->name('suporte.show');
+    Route::post('/suporte/{chamado:public_id}/responder', [AdminChamadoController::class, 'respond'])->name('suporte.respond');
+    Route::post('/suporte/{chamado:public_id}/resolver', [AdminChamadoController::class, 'resolve'])->name('suporte.resolve');
 });

@@ -12,4 +12,9 @@ trait HasPublicId
             $model->public_id = (string) Str::uuid();
         });
     }
+
+    public function getRouteKeyName(): string
+    {
+        return 'public_id';
+    }
 }
