@@ -22,7 +22,7 @@ export function DataTable<T>({ rows, columns, rowKey, onRowClick, empty }: Props
     return (
         <div className="overflow-hidden rounded-xl border border-border bg-surface-2">
             <table className="w-full text-sm">
-                <thead className="sticky top-16 z-10 bg-surface-2/95 backdrop-blur-sm">
+                <thead className="bg-surface-2">
                     <tr>
                         {columns.map((col) => (
                             <th
