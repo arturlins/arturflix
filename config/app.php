@@ -123,4 +123,7 @@ return [
         'store' => env('APP_MAINTENANCE_STORE', 'database'),
     ],
 
+    'admin_seed_email' => env('ADMIN_SEED_EMAIL', 'admin@arturflix.local'),
+    'admin_seed_password' => env('ADMIN_SEED_PASSWORD', 'change-me-on-first-login'),
+
 ];
