@@ -6,6 +6,7 @@ use App\Http\Controllers\Admin\AdminCursoController;
 use App\Http\Controllers\Admin\AdminDashboardController;
 use App\Http\Controllers\Admin\AdminModuloController;
 use App\Http\Controllers\Admin\AdminUserController;
+use App\Http\Controllers\AssistirController;
 use App\Http\Controllers\Auth\AuthenticatedSessionController;
 use App\Http\Controllers\Auth\ConfirmablePasswordController;
 use App\Http\Controllers\Auth\EmailVerificationNotificationController;
@@ -64,6 +65,11 @@ Route::middleware('auth')->group(function (): void {
     Route::get('/dashboard', DashboardController::class)->name('dashboard');
 
     Route::post('/cursos/{curso:public_id}/matricular', [CursoController::class, 'matricular'])->name('cursos.matricular');
+
+    Route::get('/cursos/{curso:public_id}/assistir/{aula:public_id?}', [AssistirController::class, 'show'])
+        ->withoutScopedBindings()
+        ->middleware('matriculado')
+        ->name('cursos.assistir');
 });
 
 Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(function (): void {
