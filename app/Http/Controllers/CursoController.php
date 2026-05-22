@@ -6,6 +6,7 @@ use App\Actions\MatricularUsuarioEmCurso;
 use App\Models\Aula;
 use App\Models\Curso;
 use App\Models\Modulo;
+use App\Models\ProgressoAula;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
@@ -48,6 +49,20 @@ class CursoController extends Controller
 
         $aulas = $curso->modulos->flatMap->aulas;
 
+        $user = $request->user();
+        $matriculado = $user
+            ? $curso->matriculas()->where('usuario_id', $user->id)->exists()
+            : null;
+
+        $progressosPorAula = collect();
+        if ($user && $matriculado) {
+            $progressosPorAula = ProgressoAula::query()
+                ->where('usuario_id', $user->id)
+                ->whereIn('aula_id', $curso->modulos->flatMap->aulas->pluck('id'))
+                ->get()
+                ->keyBy('aula_id');
+        }
+
         $modulos = $curso->modulos->map(fn (Modulo $modulo): array => [
             'public_id' => $modulo->public_id,
             'titulo' => $modulo->titulo,
@@ -59,13 +74,12 @@ class CursoController extends Controller
                 'duracao_segundos' => (int) $aula->duracao_segundos,
                 'ordem' => $aula->ordem,
                 'youtube_video_id' => $aula->youtube_video_id,
+                'concluida' => $progressosPorAula->get($aula->id)?->concluido_em !== null,
+                'em_andamento' => $progressosPorAula->get($aula->id)
+                    && $progressosPorAula->get($aula->id)->concluido_em === null
+                    && $progressosPorAula->get($aula->id)->posicao_segundos > 0,
             ])->values(),
         ])->values();
-
-        $user = $request->user();
-        $matriculado = $user
-            ? $curso->matriculas()->where('usuario_id', $user->id)->exists()
-            : null;
 
         return Inertia::render('Cursos/Show', [
             'curso' => [
