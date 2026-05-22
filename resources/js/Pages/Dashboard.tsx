@@ -1,9 +1,9 @@
 import { Head, Link, usePage } from '@inertiajs/react'
 import AppLayout from '@/layouts/AppLayout'
-import type { MeuCursoItem, PageProps } from '@/types'
+import type { MeuCursoItemComProgresso, PageProps } from '@/types'
 
 interface Props extends PageProps {
-    meusCursos: MeuCursoItem[]
+    meusCursos: MeuCursoItemComProgresso[]
 }
 
 function formatDuration(totalSeconds: number): string {
@@ -21,7 +21,7 @@ export default function Dashboard() {
     const concluidos = meusCursos.filter((c) => c.concluido_em).length
 
     const stats = [
-        { icon: '⚡', label: 'XP Acumulado', value: '0 XP' },
+        { icon: '⚡', label: 'XP Acumulado', value: `${(auth.user?.xp_total ?? 0).toLocaleString('pt-BR')} XP` },
         { icon: '🏆', label: 'Cursos Concluídos', value: String(concluidos) },
         { icon: '📚', label: 'Cursos Matriculados', value: String(meusCursos.length) },
     ]
@@ -55,6 +55,20 @@ export default function Dashboard() {
                     </div>
                 </section>
 
+                {auth.user && (
+                    <div className="flex items-center gap-6 mb-8 p-4 rounded-xl bg-[#12151b] border border-[#1e2430]">
+                        <div>
+                            <p className="text-[10px] uppercase tracking-[0.18em] text-[#8a8a8a]">XP total</p>
+                            <p className="text-2xl font-bold text-[#f1f1f1] tabular-nums">{auth.user.xp_total.toLocaleString('pt-BR')}</p>
+                        </div>
+                        <div className="w-px h-10 bg-[#1e2430]" />
+                        <div>
+                            <p className="text-[10px] uppercase tracking-[0.18em] text-[#8a8a8a]">Nivel</p>
+                            <p className="text-2xl font-bold text-[#f1f1f1] tabular-nums">{auth.user.nivel_atual}</p>
+                        </div>
+                    </div>
+                )}
+
                 <section aria-label="Meus cursos">
                     <div className="flex items-baseline justify-between mb-6">
                         <h2 className="text-[#f1f1f1] text-xl font-semibold">Meus cursos</h2>
@@ -77,12 +91,11 @@ export default function Dashboard() {
                     ) : (
                         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
                             {meusCursos.map((curso) => (
-                                <Link
+                                <div
                                     key={curso.public_id}
-                                    href={route('cursos.show', curso.public_id)}
                                     className="bg-[#12151b] border border-[#1e2430] rounded-xl overflow-hidden hover:border-[#E50914]/40 transition-colors group flex flex-col"
                                 >
-                                    <div className="h-32 bg-[#0a0c12] overflow-hidden">
+                                    <Link href={route('cursos.show', curso.public_id)} className="block h-32 bg-[#0a0c12] overflow-hidden">
                                         {curso.url_capa ? (
                                             <img
                                                 src={curso.url_capa}
@@ -95,7 +108,7 @@ export default function Dashboard() {
                                                 sem capa
                                             </div>
                                         )}
-                                    </div>
+                                    </Link>
 
                                     <div className="p-5 flex-1 flex flex-col">
                                         {curso.channel && (
@@ -104,20 +117,39 @@ export default function Dashboard() {
                                             </p>
                                         )}
 
-                                        <h3 className="text-[#f1f1f1] font-semibold text-sm leading-snug mb-4 group-hover:text-white line-clamp-2">
-                                            {curso.titulo}
-                                        </h3>
+                                        <Link href={route('cursos.show', curso.public_id)} className="block">
+                                            <h3 className="text-[#f1f1f1] font-semibold text-sm leading-snug mb-4 group-hover:text-white line-clamp-2">
+                                                {curso.titulo}
+                                            </h3>
+                                        </Link>
 
-                                        <div className="flex items-center justify-between text-xs text-[#8a8a8a] mb-4 mt-auto">
+                                        <div className="flex items-center justify-between text-xs text-[#8a8a8a] mb-1 mt-auto">
                                             <span>{formatDuration(curso.duracao_total_segundos)}</span>
                                             <span>{curso.total_aulas} aulas</span>
                                         </div>
 
-                                        <span className="w-full py-2 rounded-lg bg-[#E50914] group-hover:bg-[#c20710] text-white text-xs font-medium transition-colors text-center">
-                                            {curso.concluido_em ? 'Revisar curso' : 'Continuar'}
-                                        </span>
+                                        {(() => {
+                                            const pct = curso.total_aulas > 0 ? Math.round((curso.aulas_concluidas / curso.total_aulas) * 100) : 0
+                                            return (
+                                                <>
+                                                    <div className="flex items-center justify-between text-xs text-[#8a8a8a] mt-3 mb-1">
+                                                        <span>{curso.aulas_concluidas} de {curso.total_aulas} aulas</span>
+                                                        <span className="tabular-nums">{pct}%</span>
+                                                    </div>
+                                                    <div className="h-1 bg-[#1e2430] rounded-full overflow-hidden">
+                                                        <div className="h-full bg-[#E50914]" style={{ width: `${pct}%` }} />
+                                                    </div>
+                                                    <Link
+                                                        href={route('cursos.assistir', curso.public_id)}
+                                                        className="mt-3 inline-flex items-center justify-center w-full px-4 py-2 rounded-lg bg-[#E50914] hover:bg-[#c20710] text-white text-xs font-semibold"
+                                                    >
+                                                        {curso.aulas_concluidas > 0 ? 'Continuar' : 'Comecar'}
+                                                    </Link>
+                                                </>
+                                            )
+                                        })()}
                                     </div>
-                                </Link>
+                                </div>
                             ))}
                         </div>
                     )}
