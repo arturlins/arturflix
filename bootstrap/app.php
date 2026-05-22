@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Middleware\EnsureEmailIsVerified;
+use App\Http\Middleware\EnsureMatriculadoNoCurso;
 use App\Http\Middleware\EnsureUserIsAdmin;
 use App\Http\Middleware\HandleInertiaRequests;
 use Illuminate\Foundation\Application;
@@ -23,6 +24,8 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->alias([
             'verified' => EnsureEmailIsVerified::class,
             'admin' => EnsureUserIsAdmin::class,
+            'matriculado' => EnsureMatriculadoNoCurso::class,
+            'matriculado.aula' => EnsureMatriculadoNoCurso::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {

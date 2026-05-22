@@ -1,10 +1,10 @@
 import { Head, Link, router, usePage } from '@inertiajs/react'
 import GuestLayout from '@/layouts/GuestLayout'
-import type { CursoDetail, ModuloItem, PageProps, TipoAula } from '@/types'
+import type { CursoDetail, ModuloComStatus, PageProps, TipoAula } from '@/types'
 
 interface Props extends PageProps {
     curso: CursoDetail
-    modulos: ModuloItem[]
+    modulos: ModuloComStatus[]
     matriculado: boolean | null
 }
 
@@ -141,12 +141,13 @@ export default function CursosShow() {
                         )}
 
                         {matriculado === true && (
-                            <span className="inline-flex items-center gap-2 px-4 py-2 rounded-lg border border-emerald-500/30 bg-emerald-500/5 text-emerald-400 text-sm font-medium">
-                                <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4">
-                                    <path d="M5 12l5 5L20 7" strokeLinecap="round" strokeLinejoin="round" />
-                                </svg>
-                                Você está matriculado
-                            </span>
+                            <Link
+                                href={route('cursos.assistir', curso.public_id)}
+                                className="inline-flex items-center gap-2 px-6 py-2.5 rounded-lg bg-[#E50914] hover:bg-[#c20710] text-white text-sm font-semibold transition-colors"
+                            >
+                                <svg className="w-4 h-4" viewBox="0 0 24 24" fill="currentColor"><polygon points="6,4 20,12 6,20" /></svg>
+                                {modulos.some((m) => m.aulas.some((a) => a.concluida || a.em_andamento)) ? 'Continuar assistindo' : 'Comecar curso'}
+                            </Link>
                         )}
                     </div>
                 </div>
@@ -186,7 +187,15 @@ export default function CursosShow() {
                                                 {String(idx + 1).padStart(2, '0')}
                                             </span>
                                             <span className="text-[#8a8a8a]" aria-label={tipoLabel(aula.tipo_aula)}>
-                                                <TipoIcon tipo={aula.tipo_aula} />
+                                                {matriculado && aula.concluida ? (
+                                                    <svg className="w-4 h-4 text-emerald-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4">
+                                                        <path d="M5 12l5 5L20 7" strokeLinecap="round" strokeLinejoin="round" />
+                                                    </svg>
+                                                ) : matriculado && aula.em_andamento ? (
+                                                    <span className="w-2 h-2 rounded-full bg-amber-400 inline-block" />
+                                                ) : (
+                                                    <TipoIcon tipo={aula.tipo_aula} />
+                                                )}
                                             </span>
                                             <span className="flex-1 text-[#f1f1f1] text-sm leading-snug truncate">
                                                 {aula.titulo}

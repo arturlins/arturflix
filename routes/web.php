@@ -6,6 +6,7 @@ use App\Http\Controllers\Admin\AdminCursoController;
 use App\Http\Controllers\Admin\AdminDashboardController;
 use App\Http\Controllers\Admin\AdminModuloController;
 use App\Http\Controllers\Admin\AdminUserController;
+use App\Http\Controllers\AssistirController;
 use App\Http\Controllers\Auth\AuthenticatedSessionController;
 use App\Http\Controllers\Auth\ConfirmablePasswordController;
 use App\Http\Controllers\Auth\EmailVerificationNotificationController;
@@ -14,8 +15,10 @@ use App\Http\Controllers\Auth\PasswordController;
 use App\Http\Controllers\Auth\PasswordResetLinkController;
 use App\Http\Controllers\Auth\RegisteredUserController;
 use App\Http\Controllers\Auth\VerifyEmailController;
+use App\Http\Controllers\ComentarioAulaController;
 use App\Http\Controllers\CursoController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\ProgressoAulaController;
 use App\Http\Controllers\SuporteController;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -64,6 +67,29 @@ Route::middleware('auth')->group(function (): void {
     Route::get('/dashboard', DashboardController::class)->name('dashboard');
 
     Route::post('/cursos/{curso:public_id}/matricular', [CursoController::class, 'matricular'])->name('cursos.matricular');
+
+    Route::get('/cursos/{curso:public_id}/assistir/{aula:public_id?}', [AssistirController::class, 'show'])
+        ->withoutScopedBindings()
+        ->middleware('matriculado')
+        ->name('cursos.assistir');
+
+    Route::post('/aulas/{aula:public_id}/progresso', [ProgressoAulaController::class, 'update'])
+        ->middleware('matriculado.aula')
+        ->name('aulas.progresso');
+
+    Route::post('/aulas/{aula:public_id}/concluir', [ProgressoAulaController::class, 'concluir'])
+        ->middleware('matriculado.aula')
+        ->name('aulas.concluir');
+
+    Route::post('/aulas/{aula:public_id}/comentarios', [ComentarioAulaController::class, 'store'])
+        ->middleware('matriculado.aula')
+        ->name('aulas.comentarios.store');
+
+    Route::put('/comentarios/{comentario:public_id}', [ComentarioAulaController::class, 'update'])
+        ->name('comentarios.update');
+
+    Route::delete('/comentarios/{comentario:public_id}', [ComentarioAulaController::class, 'destroy'])
+        ->name('comentarios.destroy');
 });
 
 Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(function (): void {

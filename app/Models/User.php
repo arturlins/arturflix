@@ -7,6 +7,7 @@ use App\Enums\PapelEnum;
 use Database\Factories\UserFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 
@@ -53,5 +54,25 @@ class User extends Authenticatable
     public function matriculas(): HasMany
     {
         return $this->hasMany(Matricula::class, 'usuario_id');
+    }
+
+    public function progressos(): HasMany
+    {
+        return $this->hasMany(ProgressoAula::class, 'usuario_id');
+    }
+
+    public function historicoXp(): HasMany
+    {
+        return $this->hasMany(HistoricoXP::class, 'usuario_id');
+    }
+
+    public function perfilGamificado(): HasOne
+    {
+        return $this->hasOne(PerfilGamificado::class, 'usuario_id');
+    }
+
+    public function comentarios(): HasMany
+    {
+        return $this->hasMany(ComentarioAula::class, 'usuario_id');
     }
 }

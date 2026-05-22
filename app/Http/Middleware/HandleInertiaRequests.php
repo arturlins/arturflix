@@ -39,6 +39,8 @@ class HandleInertiaRequests extends Middleware
                         'email' => $request->user()->email,
                         'papel' => $request->user()->papel?->value,
                         'is_admin' => $request->user()->isAdmin(),
+                        'xp_total' => (int) ($request->user()->perfilGamificado?->xp_total ?? 0),
+                        'nivel_atual' => (int) ($request->user()->perfilGamificado?->nivel_atual ?? 1),
                     ]
                     : null,
             ],
