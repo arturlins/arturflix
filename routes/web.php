@@ -15,6 +15,7 @@ use App\Http\Controllers\Auth\PasswordController;
 use App\Http\Controllers\Auth\PasswordResetLinkController;
 use App\Http\Controllers\Auth\RegisteredUserController;
 use App\Http\Controllers\Auth\VerifyEmailController;
+use App\Http\Controllers\ComentarioAulaController;
 use App\Http\Controllers\CursoController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\ProgressoAulaController;
@@ -79,6 +80,16 @@ Route::middleware('auth')->group(function (): void {
     Route::post('/aulas/{aula:public_id}/concluir', [ProgressoAulaController::class, 'concluir'])
         ->middleware('matriculado.aula')
         ->name('aulas.concluir');
+
+    Route::post('/aulas/{aula:public_id}/comentarios', [ComentarioAulaController::class, 'store'])
+        ->middleware('matriculado.aula')
+        ->name('aulas.comentarios.store');
+
+    Route::put('/comentarios/{comentario:public_id}', [ComentarioAulaController::class, 'update'])
+        ->name('comentarios.update');
+
+    Route::delete('/comentarios/{comentario:public_id}', [ComentarioAulaController::class, 'destroy'])
+        ->name('comentarios.destroy');
 });
 
 Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(function (): void {
