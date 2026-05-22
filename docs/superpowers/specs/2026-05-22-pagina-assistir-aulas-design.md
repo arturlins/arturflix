@@ -39,6 +39,16 @@ Route::post('/aulas/{aula:public_id}/progresso', [ProgressoAulaController::class
 Route::post('/aulas/{aula:public_id}/concluir', [ProgressoAulaController::class, 'concluir'])
     ->middleware('matriculado.aula')
     ->name('aulas.concluir');
+
+Route::post('/aulas/{aula:public_id}/comentarios', [ComentarioAulaController::class, 'store'])
+    ->middleware('matriculado.aula')
+    ->name('aulas.comentarios.store');
+
+Route::put('/comentarios/{comentario:public_id}', [ComentarioAulaController::class, 'update'])
+    ->name('comentarios.update');
+
+Route::delete('/comentarios/{comentario:public_id}', [ComentarioAulaController::class, 'destroy'])
+    ->name('comentarios.destroy');
 ```
 
 ### Middleware: `EnsureMatriculadoNoCurso`
@@ -53,6 +63,15 @@ Lê o parâmetro de rota `curso` (ou `aula`, e resolve para o curso via `aula.mo
 - `App\Http\Controllers\ProgressoAulaController`
   - `update(Request, Aula, AtualizarProgressoAula)` — valida `posicao_segundos:int|min:0`; chama action; retorna `204`.
   - `concluir(Request, Aula, ConcluirAula)` — chama action; retorna `back()->with('flash.xp_ganho', $xp)`.
+- `App\Http\Controllers\ComentarioAulaController`
+  - `store(StoreComentarioRequest, Aula)` — cria comentário (top-level ou reply, se `comentario_pai_id` enviado e pertencer à mesma aula). Redirect back.
+  - `update(UpdateComentarioRequest, ComentarioAula)` — `authorize('update', $comentario)`; atualiza `conteudo` e marca `foi_editado = true`. Redirect back.
+  - `destroy(Request, ComentarioAula)` — `authorize('delete', $comentario)`; soft delete não — `delete()` normal (cascade nas replies via FK). Redirect back.
+
+### Policy: `ComentarioAulaPolicy`
+
+- `update($user, $comentario)` e `delete($user, $comentario)` → `$user->id === $comentario->usuario_id`.
+- Admin (`is_admin`) também pode deletar (moderação básica).
 
 ### Actions (`app/Actions/`)
 
@@ -76,7 +95,8 @@ Lê o parâmetro de rota `curso` (ou `aula`, e resolve para o curso via `aula.mo
 - `ProgressoAula` (tabela `progressos_aulas`): fillable `usuario_id, aula_id, posicao_segundos, concluido_em, ultima_visualizacao_em`; casts; `usuario()`, `aula()` belongsTo. Scope `concluida()`, `emAndamento()`.
 - `HistoricoXp` (renomear classe `HistoricoXP` → `HistoricoXp`; tabela `historico_xp`): fillable `usuario_id, quantidade, motivo`; cast `quantidade:int`; `usuario()`.
 - `PerfilGamificado` (tabela `perfis_gamificados`): fillable `usuario_id, xp_total, nivel_atual, streak_dias, ultima_atividade`; casts; `usuario()`.
-- `User` ganha `progressos()`, `historicoXp()`, `perfilGamificado()` (hasOne).
+- `ComentarioAula` (tabela `comentarios_aulas`): fillable `aula_id, usuario_id, comentario_pai_id, conteudo, foi_editado`; cast `foi_editado:bool`. Relations: `aula()`, `usuario()`, `pai()` belongsTo, `respostas()` hasMany self-referencing (ordenadas por `created_at` asc).
+- `User` ganha `progressos()`, `historicoXp()`, `perfilGamificado()` (hasOne), `comentarios()` (hasMany).
 
 ## Schema — nova migration
 
@@ -149,6 +169,35 @@ Constraint UNIQUE em `(usuario_id, aula_id)` já existe.
 - "Próxima aula": `<Link>` para `proximaAula.public_id` se houver; some na última.
 - Toast/badge flash com `+{xp} XP` ao concluir (lê `flash.xp_ganho` da página global).
 
+### Seção de comentários (abaixo do player / conteúdo)
+
+```
+┌────────────────────────────────────────────┐
+│ Comentários · 14                           │
+│                                            │
+│ ┌────────────────────────────────────────┐ │
+│ │ [textarea] Escreva um comentário...    │ │
+│ │                          [Comentar]    │ │
+│ └────────────────────────────────────────┘ │
+│                                            │
+│ ─ Avatar  Nome do usuário · há 2h          │
+│   Conteúdo do comentário aqui...           │
+│   Responder · Editar · Excluir             │
+│       └─ Avatar  Outro usuário · há 1h     │
+│          Resposta aqui... (editado)        │
+│          Responder · Editar · Excluir      │
+│                                            │
+│ ─ Avatar  ...                              │
+└────────────────────────────────────────────┘
+```
+
+- Render: lista de comentários top-level (`comentario_pai_id IS NULL`) ordenada `created_at` desc, com `respostas` aninhadas (1 nível, ordenadas asc).
+- **Criar:** textarea + botão "Comentar". `router.post(route('aulas.comentarios.store', aula.public_id), { conteudo })`.
+- **Responder:** botão "Responder" abre textarea inline; submit envia `{ conteudo, comentario_pai_id }`. Threading limitado a 1 nível visual (reply de reply vira reply do top-level — backend valida que `pai` é top-level).
+- **Editar:** se `usuario_id === auth.user.id`, botão "Editar" transforma o conteúdo em textarea com botões Salvar/Cancelar. PUT `comentarios.update`. Marca `(editado)` no header quando `foi_editado`.
+- **Excluir:** se dono (ou admin), botão "Excluir" com confirm; DELETE `comentarios.destroy`. Cascade remove respostas.
+- Validação: `conteudo` required, max 2000 chars, trim.
+
 ### Tipos `texto` e `quiz`
 
 - Sem iframe. Renderiza `aula.conteudo` (texto plano com `whitespace-pre-line`; placeholder para quiz).
@@ -175,6 +224,16 @@ Constraint UNIQUE em `(usuario_id, aula_id)` já existe.
     concluida: boolean,
   },
   proximaAula: { public_id } | null,
+  comentarios: Array<{
+    public_id, conteudo, foi_editado, created_at,
+    autor: { public_id, name, avatar_url | null },
+    is_owner: boolean,
+    respostas: Array<{
+      public_id, conteudo, foi_editado, created_at,
+      autor: { public_id, name, avatar_url | null },
+      is_owner: boolean,
+    }>,
+  }>,
 }
 ```
 
@@ -211,6 +270,15 @@ Constraint UNIQUE em `(usuario_id, aula_id)` já existe.
    - POST em aula já concluída atualiza `ultima_visualizacao_em` mas não mexe em `concluido_em`
 4. `MatriculaGateTest`
    - `POST /aulas/{aula}/progresso` e `/concluir` → 403 sem matrícula no curso da aula
+5. `ComentarioAulaTest`
+   - matriculado cria comentário top-level → 201/redirect, row persistida
+   - matriculado responde com `comentario_pai_id` válido → row persistida
+   - reply com `comentario_pai_id` apontando para um reply (não-top-level) → 422
+   - sem matrícula → 403
+   - dono edita seu comentário → `foi_editado = true`
+   - usuário tenta editar comentário de outro → 403
+   - dono deleta → comentário e replies cascade removidas
+   - admin deleta comentário de qualquer um → ok
 
 ## Fora de escopo (deixar explícito)
 
