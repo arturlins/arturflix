@@ -17,6 +17,7 @@ use App\Http\Controllers\Auth\RegisteredUserController;
 use App\Http\Controllers\Auth\VerifyEmailController;
 use App\Http\Controllers\CursoController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\ProgressoAulaController;
 use App\Http\Controllers\SuporteController;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -70,6 +71,14 @@ Route::middleware('auth')->group(function (): void {
         ->withoutScopedBindings()
         ->middleware('matriculado')
         ->name('cursos.assistir');
+
+    Route::post('/aulas/{aula:public_id}/progresso', [ProgressoAulaController::class, 'update'])
+        ->middleware('matriculado.aula')
+        ->name('aulas.progresso');
+
+    Route::post('/aulas/{aula:public_id}/concluir', [ProgressoAulaController::class, 'concluir'])
+        ->middleware('matriculado.aula')
+        ->name('aulas.concluir');
 });
 
 Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(function (): void {
